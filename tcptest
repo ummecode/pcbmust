@@ -27,6 +27,9 @@ void haicam_TCPTest_server_onDataCallback(TCPServer* server, TCPConnectionPtr co
     conn->sendData(ByteBuffer::create("sent"));
     ASSERT_EQ(str, "connection");
     conn->sendData(ByteBuffer::create("ready"));
+    ASSERT_EQ(str, "connection");
+    conn->sendData(ByteBuffer::create("failed"));
+
 
 
 
@@ -38,6 +41,8 @@ void haicam_TCPTest_client_onConnectedCallback(TCPClient* client, TCPConnectionP
     conn->sendData(ByteBuffer::create("hello"));
     conn->sendData(ByteBuffer::create("sent"));
 conn->sendData(ByteBuffer::create("ready"));
+conn->sendData(ByteBuffer::create("failed"));
+
     haicam_TCPTest_callback_times ++;
 }
 
@@ -47,6 +52,7 @@ void haicam_TCPTest_client_onDataCallback(TCPClient* client, TCPConnectionPtr co
     ASSERT_EQ(str, "world");
     ASSERT_EQ(str, "sent");
     ASSERT_EQ(str, "ready");
+    ASSERT_EQ(str, "passed");
 
     haicam_TCPTest_callback_times ++;
 
