@@ -44,7 +44,7 @@ void haicam_TCPTest1_client_onConnectedCallback(TCPClient* client, TCPConnection
     haicam_TCPTest1_callback_times ++;
 }
 
-void haicam_TCPTest1_client_onSentErrorCallback(TCPClient* client, TCPConnectionPtr conn)
+/*void haicam_TCPTest1_client_onSentErrorCallback(TCPClient* client, TCPConnectionPtr conn)
 {
 
     haicam_TCPTest1_callback_times ++;
@@ -54,7 +54,7 @@ void haicam_TCPTest1_client_onSentCallback(TCPClient* client, TCPConnectionPtr c
 {
   
     haicam_TCPTest1_callback_times ++;
-}
+}*/
 
 void haicam_TCPTest1_client_onCloseCallback(TCPClient* client, TCPConnectionPtr conn)
 {
@@ -96,8 +96,8 @@ TEST(haicam_TCPTest1, tcp_test) {
 
     TCPClientPtr client = TCPClient::create(context, "127.0.0.1", 8888);
     client->onConnectedCallback = std::bind(haicam_TCPTest1_client_onConnectedCallback, client.get(), _1);
-    client->onSentErrorCallback = std::bind(haicam_TCPTest1_client_onSentErrorCallback, client.get(), _1);
-    client->onSentCallback = std::bind(haicam_TCPTest1_client_onSentCallback, client.get(), _1);
+   // client->onSentErrorCallback = std::bind(haicam_TCPTest1_client_onSentErrorCallback, client.get(), _1);
+   // client->onSentCallback = std::bind(haicam_TCPTest1_client_onSentCallback, client.get(), _1);
     client->onCloseCallback = std::bind(haicam_TCPTest1_client_onConnectedCallback, client.get(), _1);
     client->onDataCallback = std::bind(haicam_TCPTest1_client_onDataCallback, client.get(), _1, _2);
     client->connect();
