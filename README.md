@@ -16,8 +16,9 @@ Haicam introduces end-to-end encryption technology to home security cameras sinc
  - libuv UDP
  - libuv thread
  - libuv timer
-5. please read https://www.dropbox.com/s/jbskn03hfnrzgc0/GM8136-Docs.zip?dl=0
-6. Fork project https://github.com/Haicam/Haicam to your account.
+5. Haicam project introduction-https://drive.google.com/u/2/open?id=1C8iJNla9VwyZp5UVFTZnXcy-qrBbTQsNq_UncXnZLAA
+6. please read https://www.dropbox.com/s/jbskn03hfnrzgc0/GM8136-Docs.zip?dl=0
+7. Fork project https://github.com/Haicam/Haicam to your account.
 7. git clone the forked project in your account to your local computer.
 8. switch to develop branch.
 8. docker pull haicam/haicam-toolchain:latest.
