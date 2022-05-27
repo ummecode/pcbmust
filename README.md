@@ -18,6 +18,8 @@ Haicam introduces end-to-end encryption technology to home security cameras sinc
  - libuv thread
  - libuv timer
 5. Haicam project introduction-https://drive.google.com/u/2/open?id=1C8iJNla9VwyZp5UVFTZnXcy-qrBbTQsNq_UncXnZLAA
+6. [Haicam Deck.pdf](https://github.com/ummecode/git_test/files/8788162/Haicam.Deck.pdf)
+
 
 7. please read about the GM8136 firmware- https://www.dropbox.com/s/jbskn03hfnrzgc0/GM8136-Docs.zip?dl=0
 8. Fork project https://github.com/Haicam/Haicam to your account.
