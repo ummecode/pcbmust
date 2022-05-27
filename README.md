@@ -21,7 +21,7 @@ Haicam introduces end-to-end encryption technology to home security cameras sinc
 3. Install Ubuntu for linux.
 4. install docker,VSCode
 5. study https://github.com/libuv/libuv  
-         https://docs.libuv.org/en/v1.x/guide.htm
+         https://docs.libuv.org/en/v1.x/guide.html
   - libuv TCP
  - libuv UDP
  - libuv thread
