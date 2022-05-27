@@ -8,6 +8,10 @@ Haicam introduces end-to-end encryption technology to home security cameras sinc
 
 ## steps for development-
 
+1. Haicam project introduction-
+- https://drive.google.com/u/2/open?id=1C8iJNla9VwyZp5UVFTZnXcy-qrBbTQsNq_UncXnZLAA
+- [Haicam Deck.pdf](https://github.com/ummecode/git_test/files/8788162/Haicam.Deck.pdf)
+
 1. Become familier with Git,Docker,googletest,c++ shared pointer,cmake.
 2. Install Ubuntu for linux.
 3. install docker,VSCode
