@@ -11,23 +11,25 @@ Haicam introduces end-to-end encryption technology to home security cameras sinc
 1. Become familier with Git,Docker,googletest,c++ shared pointer,cmake.
 2. Install Ubuntu for linux.
 3. install docker,VSCode
-4. study https://github.com/libuv/https://docs.libuv.org/en/v1.x/guide.html
+4. study https://github.com/libuv/libuv
+                https://docs.libuv.org/en/v1.x/guide.html
  - libuv TCP
  - libuv UDP
  - libuv thread
  - libuv timer
 5. Haicam project introduction-https://drive.google.com/u/2/open?id=1C8iJNla9VwyZp5UVFTZnXcy-qrBbTQsNq_UncXnZLAA
-6. please read https://www.dropbox.com/s/jbskn03hfnrzgc0/GM8136-Docs.zip?dl=0
-7. Fork project https://github.com/Haicam/Haicam to your account.
-7. git clone the forked project in your account to your local computer.
-8. switch to develop branch.
-8. docker pull haicam/haicam-toolchain:latest.
-9. Run haicam toolchain docker by command: ./run_docker.sh
-10. Enter the docker Environment.
-11. Build the project for all platforms, by run command: ./build/haicam.sh
-12. Build for Linux x86_64 only by command: ./build/apps/linux-x86_64.sh
-13. Run all test cases for Linux x86_64, by command: ./bin/linux/x86_64/generic/haicam-test
-14. If the test cases crash, run gdb command below for debug
+
+7. please read about the GM8136 firmware- https://www.dropbox.com/s/jbskn03hfnrzgc0/GM8136-Docs.zip?dl=0
+8. Fork project https://github.com/Haicam/Haicam to your account.
+9. git clone the forked project in your account to your local computer.
+10. switch to develop branch.
+11. docker pull haicam/haicam-toolchain:latest.
+12. Run haicam toolchain docker by command: ./run_docker.sh
+13. Enter the docker Environment.
+14. Build the project for all platforms, by run command: ./build/haicam.sh
+15. Build for Linux x86_64 only by command: ./build/apps/linux-x86_64.sh
+16. Run all test cases for Linux x86_64, by command: ./bin/linux/x86_64/generic/haicam-test
+17. If the test cases crash, run gdb command below for debug
 - $ gdb ./bin/linux/x86_64/generic/haicam-test
 - (gdb) r
 - (gdb) bt full
