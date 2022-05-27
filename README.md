@@ -11,6 +11,11 @@ Haicam introduces end-to-end encryption technology to home security cameras sinc
 1. Haicam project introduction-
 - https://drive.google.com/u/2/open?id=1C8iJNla9VwyZp5UVFTZnXcy-qrBbTQsNq_UncXnZLAA
 - [Haicam Deck.pdf](https://github.com/ummecode/git_test/files/8788162/Haicam.Deck.pdf)
+- [Haicam-flow.pdf](https://github.com/ummecode/git_test/files/8788237/Haicam-flow.pdf)
+- ### camera state graph
+- ![camera-state](https://user-images.githubusercontent.com/104251819/170747956-29cdb8e4-853f-438a-87ee-85d71b0cd953.png)
+- [camera-codes.zip](https://github.com/ummecode/git_test/files/8788252/camera-codes.zip)
+
 
 1. Become familier with Git,Docker,googletest,c++ shared pointer,cmake.
 2. Install Ubuntu for linux.
