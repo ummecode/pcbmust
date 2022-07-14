@@ -1,0 +1,237 @@
+const int analogPin=34;
+const int SSR1=32;
+const int SSR2=33;
+const int SSR3=25;
+const int SSR4=26;
+const int SSR5=27;
+const int SSR6=14;
+const int DLY1=1000;
+const int DLY2=2000;
+const int DLY3=3000;
+const int DLY4=4000;
+const int DLY5=5000;
+const int DLY6=6000;
+const int DLY8=8000;
+const int DLY60=60000;
+const int DLY10=10000;
+int count=0;
+
+
+
+void setup() {
+  Serial.begin(9600);
+  digitalWrite(SSR1, HIGH);
+  digitalWrite(SSR2, HIGH);
+  digitalWrite(SSR3, HIGH);
+  digitalWrite(SSR4, HIGH);
+  digitalWrite(SSR5, HIGH);
+  digitalWrite(SSR6, HIGH);
+  pinMode(SSR1, OUTPUT);
+  pinMode(SSR2, OUTPUT);
+  pinMode(SSR3, OUTPUT);
+  pinMode(SSR4, OUTPUT);
+  pinMode(SSR5, OUTPUT);
+  pinMode(SSR6, OUTPUT);
+ }
+
+ void loop(){
+  int val;
+float volt;
+  val=analogRead(analogPin);
+  volt=val*3.3/4095;
+  Serial.print("Value: ");
+  Serial.print( val);
+  Serial.print("  Volt:");
+  Serial.print( volt);
+  if(volt>=0.5)
+  {
+    count=count+1;
+    if(count>4)
+    {
+    count=count % 5;
+    }
+  }
+  Serial.print("  count:");
+  Serial.println( count);
+  delay(DLY1);
+  if(volt<0.5)
+  {
+    if(count==0)
+    {
+      program_0();
+      
+    }
+     else if(count==1)
+    {
+      program_1();
+    }
+     else if(count==2)
+    {
+      program_2();
+    }
+     else if(count==3)
+    {
+      program_3();
+    }
+     else
+    {
+      program_4();
+    }
+    
+  }
+  else
+  {
+    program_0();
+  }
+  
+ }
+
+void program_0(){
+  digitalWrite(SSR1, HIGH);
+  digitalWrite(SSR2, HIGH);
+  digitalWrite(SSR3, HIGH);
+  digitalWrite(SSR4, HIGH);
+  digitalWrite(SSR5, HIGH);
+  digitalWrite(SSR6, HIGH);
+}
+
+void program_1(){
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR6, LOW);
+    delay(DLY5);
+    digitalWrite(SSR6, HIGH);
+    delay(DLY5);
+    digitalWrite(SSR2, LOW);
+    delay(DLY5);
+    digitalWrite(SSR1, HIGH);
+    delay(DLY5);
+    digitalWrite(SSR3, LOW);
+    delay(DLY5);
+    digitalWrite(SSR2, HIGH);
+    delay(DLY5);
+    digitalWrite(SSR4, LOW);
+    delay(DLY5);
+    digitalWrite(SSR3, HIGH); 
+    delay(DLY5);
+    digitalWrite(SSR5, LOW); 
+    delay(DLY5);
+    digitalWrite(SSR4, HIGH); 
+    delay(DLY5);
+    digitalWrite(SSR6, LOW); 
+    delay(DLY5);
+    digitalWrite(SSR5, HIGH); 
+    delay(DLY5);
+    digitalWrite(SSR6, HIGH);
+    }
+
+    void program_2(){
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR5, LOW);
+    digitalWrite(SSR6, LOW);
+    delay(DLY60);
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR2, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR4, HIGH);
+    digitalWrite(SSR5, HIGH);
+    digitalWrite(SSR6, HIGH);
+    }
+
+    void program_3(){
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    delay(DLY10);
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR6, LOW);
+    delay(DLY10);
+    digitalWrite(SSR2, HIGH);
+    digitalWrite(SSR4, HIGH);
+    digitalWrite(SSR6, HIGH);
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    delay(DLY10);
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR6, LOW);
+    delay(DLY10);
+    digitalWrite(SSR2, HIGH);
+    digitalWrite(SSR4, HIGH);
+    digitalWrite(SSR6, HIGH);
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    delay(DLY10);
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR6, LOW);
+    delay(DLY10);
+    }
+    
+    void program_4(){
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    delay(DLY5);
+    digitalWrite(SSR4, LOW);
+    delay(DLY3);
+    digitalWrite(SSR2, LOW);
+    delay(DLY2);
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    digitalWrite(SSR6, LOW);
+    delay(DLY8);
+    digitalWrite(SSR3, LOW);
+    delay(DLY2);
+    digitalWrite(SSR2, HIGH);
+    digitalWrite(SSR4, HIGH);
+    digitalWrite(SSR5, LOW);
+    digitalWrite(SSR1, LOW);
+    delay(DLY2);
+    digitalWrite(SSR6, HIGH);
+    delay(DLY2);
+    digitalWrite(SSR2, LOW);
+    delay(DLY2);
+    digitalWrite(SSR4, LOW);
+    delay(DLY4);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR6, LOW);
+    delay(DLY1);
+    digitalWrite(SSR5, HIGH);
+    delay(DLY2);
+    digitalWrite(SSR1, HIGH);
+    delay(DLY5);
+    digitalWrite(SSR1, LOW);
+    delay(DLY2);
+    digitalWrite(SSR6, HIGH);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    delay(DLY2);
+    digitalWrite(SSR4, HIGH);
+    delay(DLY2);
+    digitalWrite(SSR2, HIGH);
+    delay(DLY6);
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR6, LOW);
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    delay(DLY5);
+    
+   }
