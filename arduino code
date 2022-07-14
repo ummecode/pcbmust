@@ -5,6 +5,27 @@ const int SSR3=25;
 const int SSR4=26;
 const int SSR5=27;
 const int SSR6=14;
+
+const int SSR7=13;
+const int SSR8=12;
+const int SSR9=35;
+const int SSR10=15;
+const int SSR11=2;
+const int SSR12=4;
+const int SSR13=5;
+const int SSR14=18;
+const int SSR15=19;
+const int SSR16=21;
+const int SSR17=22;
+const int SSR18=23;
+const int SSR19=36;
+const int SSR20=39;
+const int SSR21=16;
+const int SSR22=17;
+const int SSR23=1;
+const int SSR24=3;
+
+
 const int DLY1=1000;
 const int DLY2=2000;
 const int DLY3=3000;
@@ -26,6 +47,27 @@ void setup() {
   digitalWrite(SSR4, HIGH);
   digitalWrite(SSR5, HIGH);
   digitalWrite(SSR6, HIGH);
+  
+  digitalWrite(SSR7, LOW);
+  digitalWrite(SSR8, LOW);
+  digitalWrite(SSR9, LOW);
+  digitalWrite(SSR10, LOW);
+  digitalWrite(SSR11, LOW);
+  digitalWrite(SSR12, LOW);
+  digitalWrite(SSR13, LOW);
+  digitalWrite(SSR14, LOW);
+  digitalWrite(SSR15, LOW);
+  digitalWrite(SSR16, LOW);
+  digitalWrite(SSR17, LOW);
+  digitalWrite(SSR18, LOW);
+  digitalWrite(SSR19, LOW);
+  digitalWrite(SSR20, LOW);
+  digitalWrite(SSR21, LOW);
+  digitalWrite(SSR22, LOW);
+  digitalWrite(SSR23, LOW);
+  digitalWrite(SSR24, LOW);
+  
+  
   pinMode(SSR1, OUTPUT);
   pinMode(SSR2, OUTPUT);
   pinMode(SSR3, OUTPUT);
