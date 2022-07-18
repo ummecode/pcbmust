@@ -1,0 +1,233 @@
+#include "BluetoothSerial.h"
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+//#if !defined(CONFIG_BT_SPP_ENABLED)
+//#error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
+//#endif
+
+BluetoothSerial SerialBT;
+const int SSR1=32;
+const int SSR2=33;
+const int SSR3=25;
+const int SSR4=26;
+const int SSR5=27;
+const int SSR6=14;
+const int DLY1=1000;
+const int DLY2=2000;
+const int DLY3=3000;
+const int DLY4=4000;
+const int DLY5=5000;
+const int DLY6=6000;
+const int DLY8=8000;
+const int DLY60=60000;
+const int DLY10=10000;
+int count;
+
+void setup() {
+  digitalWrite(SSR1, LOW);
+  digitalWrite(SSR2, LOW);
+  digitalWrite(SSR3, LOW);
+  digitalWrite(SSR4, LOW);
+  digitalWrite(SSR5, LOW);
+  digitalWrite(SSR6, LOW);
+  pinMode(SSR1, OUTPUT);
+  pinMode(SSR2, OUTPUT);
+  pinMode(SSR3, OUTPUT);
+  pinMode(SSR4, OUTPUT);
+  pinMode(SSR5, OUTPUT);
+  pinMode(SSR6, OUTPUT);
+   Serial.begin(115200);
+  SerialBT.begin("ESP32test"); //Bluetooth device name
+  Serial.println("The device started, now you can pair it with bluetooth!");
+ }
+
+ void loop(){
+   
+  if(SerialBT.available()){
+    count = SerialBT.read();
+     Serial.write(count);
+    }
+    
+   Serial.print("Count:");
+  Serial.println( count);
+  
+   if(count == 48)
+    {
+      program_0();
+      
+    }
+    else if(count == 49)
+    {
+      program_1();
+    }
+     else if(count == 50)
+    {
+      program_2();
+    }
+    else if(count == 51)
+    {
+      program_3();
+    }
+
+     else if(count == 52)
+    {
+      program_4();
+    }
+    
+  
+    }
+ 
+
+void program_0(){
+  digitalWrite(SSR1, LOW);
+  digitalWrite(SSR2, LOW);
+  digitalWrite(SSR3, LOW);
+  digitalWrite(SSR4, LOW);
+  digitalWrite(SSR5, LOW);
+  digitalWrite(SSR6, LOW);
+}
+
+void program_1(){
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR6, HIGH);
+    delay(DLY5);
+    digitalWrite(SSR6, LOW);
+    delay(DLY5);
+    digitalWrite(SSR2, HIGH);
+    delay(DLY5);
+    digitalWrite(SSR1, LOW);
+    delay(DLY5);
+    digitalWrite(SSR3, HIGH);
+    delay(DLY5);
+    digitalWrite(SSR2, LOW);
+    delay(DLY5);
+    digitalWrite(SSR4, HIGH);
+    delay(DLY5);
+    digitalWrite(SSR3, LOW); 
+    delay(DLY5);
+    digitalWrite(SSR5, HIGH); 
+    delay(DLY5);
+    digitalWrite(SSR4, LOW); 
+    delay(DLY5);
+    digitalWrite(SSR6, HIGH); 
+    delay(DLY5);
+    digitalWrite(SSR5, LOW); 
+    delay(DLY5);
+    digitalWrite(SSR6, LOW);
+    }
+
+    void program_2(){
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR2, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR4, HIGH);
+    digitalWrite(SSR5, HIGH);
+    digitalWrite(SSR6, HIGH);
+    delay(DLY60);
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR5, LOW);
+    digitalWrite(SSR6, LOW);
+    }
+
+    void program_3(){
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    delay(DLY10);
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    digitalWrite(SSR2, HIGH);
+    digitalWrite(SSR4, HIGH);
+    digitalWrite(SSR6, HIGH);
+    delay(DLY10);
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR6, LOW);
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    delay(DLY10);
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    digitalWrite(SSR2, HIGH);
+    digitalWrite(SSR4, HIGH);
+    digitalWrite(SSR6, HIGH);
+    delay(DLY10);
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR6, LOW);
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    delay(DLY10);
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    digitalWrite(SSR2, HIGH);
+    digitalWrite(SSR4, HIGH);
+    digitalWrite(SSR6, HIGH);
+    delay(DLY10);
+    }
+    
+    void program_4(){
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    delay(DLY5);
+    digitalWrite(SSR4, HIGH);
+    delay(DLY3);
+    digitalWrite(SSR2, HIGH);
+    delay(DLY2);
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    digitalWrite(SSR6, HIGH);
+    delay(DLY8);
+    digitalWrite(SSR3, HIGH);
+    delay(DLY2);
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR5, HIGH);
+    digitalWrite(SSR1, HIGH);
+    delay(DLY2);
+    digitalWrite(SSR6, LOW);
+    delay(DLY2);
+    digitalWrite(SSR2, HIGH);
+    delay(DLY2);
+    digitalWrite(SSR4, HIGH);
+    delay(DLY4);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR6, HIGH);
+    delay(DLY1);
+    digitalWrite(SSR5, LOW);
+    delay(DLY2);
+    digitalWrite(SSR1, LOW);
+    delay(DLY5);
+    digitalWrite(SSR1, HIGH);
+    delay(DLY2);
+    digitalWrite(SSR6, LOW);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    delay(DLY2);
+    digitalWrite(SSR4, LOW);
+    delay(DLY2);
+    digitalWrite(SSR2, LOW);
+    delay(DLY6);
+    digitalWrite(SSR2, HIGH);
+    digitalWrite(SSR4, HIGH);
+    digitalWrite(SSR6, HIGH);
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    delay(DLY5);
+    }
+    
+    
