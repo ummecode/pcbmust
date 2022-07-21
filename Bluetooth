@@ -4,17 +4,35 @@
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
 
-//#if !defined(CONFIG_BT_SPP_ENABLED)
-//#error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
-//#endif
-
 BluetoothSerial SerialBT;
+
+
 const int SSR1=32;
 const int SSR2=33;
 const int SSR3=25;
 const int SSR4=26;
 const int SSR5=27;
 const int SSR6=14;
+
+const int SSR7=13;
+const int SSR8=12;
+const int SSR9=35;
+const int SSR10=15;
+const int SSR11=2;
+const int SSR12=4;
+const int SSR13=5;
+const int SSR14=18;
+const int SSR15=19;
+const int SSR16=21;
+const int SSR17=22;
+const int SSR18=23;
+const int SSR19=36;
+const int SSR20=39;
+const int SSR21=16;
+const int SSR22=17;
+const int SSR23=1;
+const int SSR24=3;
+
 const int DLY1=1000;
 const int DLY2=2000;
 const int DLY3=3000;
@@ -27,19 +45,39 @@ const int DLY10=10000;
 int count;
 
 void setup() {
-  digitalWrite(SSR1, LOW);
-  digitalWrite(SSR2, LOW);
-  digitalWrite(SSR3, LOW);
-  digitalWrite(SSR4, LOW);
-  digitalWrite(SSR5, LOW);
-  digitalWrite(SSR6, LOW);
+  digitalWrite(SSR1, HIGH);
+  digitalWrite(SSR2, HIGH);
+  digitalWrite(SSR3, HIGH);
+  digitalWrite(SSR4, HIGH);
+  digitalWrite(SSR5, HIGH);
+  digitalWrite(SSR6, HIGH);
+  
+  digitalWrite(SSR7, LOW);
+  digitalWrite(SSR8, LOW);
+  digitalWrite(SSR9, LOW);
+  digitalWrite(SSR10, LOW);
+  digitalWrite(SSR11, LOW);
+  digitalWrite(SSR12, LOW);
+  digitalWrite(SSR13, LOW);
+  digitalWrite(SSR14, LOW);
+  digitalWrite(SSR15, LOW);
+  digitalWrite(SSR16, LOW);
+  digitalWrite(SSR17, LOW);
+  digitalWrite(SSR18, LOW);
+  digitalWrite(SSR19, LOW);
+  digitalWrite(SSR20, LOW);
+  digitalWrite(SSR21, LOW);
+  digitalWrite(SSR22, LOW);
+  digitalWrite(SSR23, LOW);
+  digitalWrite(SSR24, LOW);
+  
   pinMode(SSR1, OUTPUT);
   pinMode(SSR2, OUTPUT);
   pinMode(SSR3, OUTPUT);
   pinMode(SSR4, OUTPUT);
   pinMode(SSR5, OUTPUT);
   pinMode(SSR6, OUTPUT);
-   Serial.begin(115200);
+  Serial.begin(115200);
   SerialBT.begin("ESP32test"); //Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
  }
@@ -56,24 +94,33 @@ void setup() {
   
    if(count == 48)
     {
-      program_0();
+      Off();
       
     }
     else if(count == 49)
     {
-      program_1();
+     
+      On();
     }
      else if(count == 50)
     {
-      program_2();
-    }
+      Off();
+      program_1();
+      }
     else if(count == 51)
     {
-      program_3();
+      Off();
+      program_2();
     }
 
      else if(count == 52)
     {
+      Off();
+      program_3();
+    }
+     else if(count == 53)
+    {
+      Off();
       program_4();
     }
     
@@ -81,153 +128,837 @@ void setup() {
     }
  
 
-void program_0(){
+void Off(){
+  digitalWrite(SSR1, HIGH);
+  digitalWrite(SSR2, HIGH);
+  digitalWrite(SSR3, HIGH);
+  digitalWrite(SSR4, HIGH);
+  digitalWrite(SSR5, HIGH);
+  digitalWrite(SSR6, HIGH);
+}
+
+void On(){
   digitalWrite(SSR1, LOW);
   digitalWrite(SSR2, LOW);
   digitalWrite(SSR3, LOW);
   digitalWrite(SSR4, LOW);
   digitalWrite(SSR5, LOW);
   digitalWrite(SSR6, LOW);
-}
+  Count0();
+ 
+ }
 
 void program_1(){
-    digitalWrite(SSR1, HIGH);
-    digitalWrite(SSR6, HIGH);
-    delay(DLY5);
-    digitalWrite(SSR6, LOW);
-    delay(DLY5);
-    digitalWrite(SSR2, HIGH);
-    delay(DLY5);
+ 
     digitalWrite(SSR1, LOW);
-    delay(DLY5);
-    digitalWrite(SSR3, HIGH);
-    delay(DLY5);
-    digitalWrite(SSR2, LOW);
-    delay(DLY5);
-    digitalWrite(SSR4, HIGH);
-    delay(DLY5);
-    digitalWrite(SSR3, LOW); 
-    delay(DLY5);
-    digitalWrite(SSR5, HIGH); 
-    delay(DLY5);
-    digitalWrite(SSR4, LOW); 
-    delay(DLY5);
-    digitalWrite(SSR6, HIGH); 
-    delay(DLY5);
-    digitalWrite(SSR5, LOW); 
-    delay(DLY5);
     digitalWrite(SSR6, LOW);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR6, HIGH);
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR2, LOW);
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR1, HIGH);
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR3, LOW);
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR2, HIGH);
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR4, LOW);
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR3, HIGH); 
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR5, LOW); 
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR4, HIGH);
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR6, LOW); 
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR5, HIGH);
+     Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    delay(DLY1);
+    Count1();
+    digitalWrite(SSR6, HIGH);
+    Count1();
+    
     }
 
-    void program_2(){
-    digitalWrite(SSR1, HIGH);
-    digitalWrite(SSR2, HIGH);
-    digitalWrite(SSR3, HIGH);
-    digitalWrite(SSR4, HIGH);
-    digitalWrite(SSR5, HIGH);
-    digitalWrite(SSR6, HIGH);
-    delay(DLY60);
+   void program_2(){
     digitalWrite(SSR1, LOW);
     digitalWrite(SSR2, LOW);
     digitalWrite(SSR3, LOW);
     digitalWrite(SSR4, LOW);
     digitalWrite(SSR5, LOW);
     digitalWrite(SSR6, LOW);
+    Count2();
+   delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    delay(DLY1);
+    Count2();
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR2, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR4, HIGH);
+    digitalWrite(SSR5, HIGH);
+    digitalWrite(SSR6, HIGH);
+    Count2();
     }
 
     void program_3(){
-    digitalWrite(SSR1, HIGH);
-    digitalWrite(SSR3, HIGH);
-    digitalWrite(SSR5, HIGH);
-    delay(DLY10);
     digitalWrite(SSR1, LOW);
     digitalWrite(SSR3, LOW);
     digitalWrite(SSR5, LOW);
-    digitalWrite(SSR2, HIGH);
-    digitalWrite(SSR4, HIGH);
-    digitalWrite(SSR6, HIGH);
-    delay(DLY10);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
     digitalWrite(SSR2, LOW);
     digitalWrite(SSR4, LOW);
     digitalWrite(SSR6, LOW);
-    digitalWrite(SSR1, HIGH);
-    digitalWrite(SSR3, HIGH);
-    digitalWrite(SSR5, HIGH);
-    delay(DLY10);
-    digitalWrite(SSR1, LOW);
-    digitalWrite(SSR3, LOW);
-    digitalWrite(SSR5, LOW);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
     digitalWrite(SSR2, HIGH);
     digitalWrite(SSR4, HIGH);
     digitalWrite(SSR6, HIGH);
-    delay(DLY10);
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
     digitalWrite(SSR2, LOW);
     digitalWrite(SSR4, LOW);
     digitalWrite(SSR6, LOW);
-    digitalWrite(SSR1, HIGH);
-    digitalWrite(SSR3, HIGH);
-    digitalWrite(SSR5, HIGH);
-    delay(DLY10);
-    digitalWrite(SSR1, LOW);
-    digitalWrite(SSR3, LOW);
-    digitalWrite(SSR5, LOW);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
     digitalWrite(SSR2, HIGH);
     digitalWrite(SSR4, HIGH);
     digitalWrite(SSR6, HIGH);
-    delay(DLY10);
+    digitalWrite(SSR1, LOW);
+    digitalWrite(SSR3, LOW);
+    digitalWrite(SSR5, LOW);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR6, LOW);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
+    delay(DLY1);
+    Count3();
     }
     
     void program_4(){
-    digitalWrite(SSR1, HIGH);
-    digitalWrite(SSR3, HIGH);
-    digitalWrite(SSR5, HIGH);
-    delay(DLY5);
-    digitalWrite(SSR4, HIGH);
-    delay(DLY3);
-    digitalWrite(SSR2, HIGH);
-    delay(DLY2);
     digitalWrite(SSR1, LOW);
     digitalWrite(SSR3, LOW);
     digitalWrite(SSR5, LOW);
-    digitalWrite(SSR6, HIGH);
-    delay(DLY8);
-    digitalWrite(SSR3, HIGH);
-    delay(DLY2);
-    digitalWrite(SSR2, LOW);
-    digitalWrite(SSR4, LOW);
-    digitalWrite(SSR5, HIGH);
-    digitalWrite(SSR1, HIGH);
-    delay(DLY2);
-    digitalWrite(SSR6, LOW);
-    delay(DLY2);
-    digitalWrite(SSR2, HIGH);
-    delay(DLY2);
-    digitalWrite(SSR4, HIGH);
-    delay(DLY4);
-    digitalWrite(SSR3, LOW);
-    digitalWrite(SSR6, HIGH);
+    Count4();
     delay(DLY1);
-    digitalWrite(SSR5, LOW);
-    delay(DLY2);
-    digitalWrite(SSR1, LOW);
-    delay(DLY5);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR4, LOW);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    
+    digitalWrite(SSR2, LOW);
+   Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
     digitalWrite(SSR1, HIGH);
-    delay(DLY2);
-    digitalWrite(SSR6, LOW);
     digitalWrite(SSR3, HIGH);
     digitalWrite(SSR5, HIGH);
-    delay(DLY2);
-    digitalWrite(SSR4, LOW);
-    delay(DLY2);
-    digitalWrite(SSR2, LOW);
-    delay(DLY6);
+    digitalWrite(SSR6, LOW);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    
+    digitalWrite(SSR3, LOW);
+    Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+   
     digitalWrite(SSR2, HIGH);
     digitalWrite(SSR4, HIGH);
-    digitalWrite(SSR6, HIGH);
+    digitalWrite(SSR5, LOW);
     digitalWrite(SSR1, LOW);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR6, HIGH);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR2, LOW);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR4, LOW);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR6, LOW);
+    Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR5, HIGH);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR1, HIGH);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+     Count4();
+    digitalWrite(SSR1, LOW);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR6, HIGH);
     digitalWrite(SSR3, LOW);
     digitalWrite(SSR5, LOW);
-    delay(DLY5);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR4, HIGH);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR2, HIGH);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    digitalWrite(SSR2, LOW);
+    digitalWrite(SSR4, LOW);
+    digitalWrite(SSR6, LOW);
+    digitalWrite(SSR1, HIGH);
+    digitalWrite(SSR3, HIGH);
+    digitalWrite(SSR5, HIGH);
+   Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+     Count4();
+    delay(DLY1);
+    Count4();
+    delay(DLY1);
+     Count4();
+   
+   }
+   
+   
+   
+   void Count0(){
+      if(SerialBT.available()){
+    count = SerialBT.read();
+     Serial.write(count);
+    
     }
+   
+    
+   Serial.print("Count0:");
+  Serial.println( count);
+  
+    
+     if(count==48)
+    {
+      Off();
+    }
+    
+    else if(count==50)
+    {
+      Off();
+      program_1();
+    }
+   
+     else if(count==51)
+    {
+      Off();
+      program_2();
+    }
+    else if(count==52)
+    {
+      Off();
+      program_3();
+    }
+     else if(count==53)
+    {
+      Off();
+      program_4();
+    }
+   
+   }
+
+    void Count1(){
+      if(SerialBT.available()){
+    count = SerialBT.read();
+     Serial.write(count);
+    }
+    
+   Serial.print("Count1:");
+  Serial.println( count);
+    
+    
+     if(count==48)
+    {
+      Off();
+    }
+    
+    else if(count==49)
+    {
+     
+      Off();
+      On();
+    }
+  else if(count==51)
+    {
+      Off();
+      program_2();
+    }
+    else if(count==52)
+    {
+      Off();
+      program_3();
+    }
+     else if(count==53)
+    {
+      Off();
+      program_4();
+    }
+   
+   }
+
+    void Count2(){
+      if(SerialBT.available()){
+    count = SerialBT.read();
+     Serial.write(count);
+    }
+    
+   Serial.print("Count2:");
+  Serial.println( count);
+    
+     if(count==48)
+    {
+      Off();
+    }
+    
+    else if(count==49)
+    {
+      Off();
+      On();
+    }
+   else if(count==50)
+    {
+      Off();
+      program_1();
+    }
+    else if(count==52)
+    {
+      Off();
+      program_3();
+    }
+     else if(count==53)
+    {
+      Off();
+      program_4();
+    }
+   
+   }
+
+   void Count3(){
+      if(SerialBT.available()){
+    count = SerialBT.read();
+     Serial.write(count);
+    }
+    
+   Serial.print("Count3:");
+  Serial.println( count);
+    
+     if(count==48)
+    {
+      Off();
+    }
+    
+    else if(count==49)
+    {
+      Off();
+      On();
+    }
+   else if(count==50)
+    {
+      Off();
+      program_1();
+    }
+    else if(count==51)
+    {
+      Off();
+      program_2();
+    }
+     else if(count==53)
+    {
+      Off();
+      program_4();
+    }
+   
+   }
+
+   void Count4(){
+      if(SerialBT.available()){
+    count = SerialBT.read();
+     Serial.write(count);
+    }
+    
+   Serial.print("Count4:");
+  Serial.println( count);
+    
+     if(count==48)
+    {
+      Off();
+    }
+    
+    else if(count==49)
+    {
+      Off();
+      On();
+    }
+   else if(count==50)
+    {
+      Off();
+      program_1();
+    }
+    else if(count==51)
+    {
+      Off();
+      program_2();
+    }
+     else if(count==52)
+    {
+      Off();
+      program_3();
+    }
+   
+   }
+    
+    
     
     
