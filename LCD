@@ -1,0 +1,62 @@
+
+#include <LiquidCrystal.h>
+const int rs=12,en=27,d4=26,d5=25,d6=33,d7=32;
+LiquidCrystal lcd(rs,en,d4,d5,d6,d7);
+
+const int analogPin1=34;
+  const int analogPin2=35;
+  const int Relay=15;
+const int Pump=2;
+
+void setup() {
+  Serial.begin(9600);
+  digitalWrite(Relay, LOW);
+  digitalWrite(Pump, LOW);
+  pinMode(Relay, OUTPUT);
+  pinMode(Pump, OUTPUT);
+  lcd.begin(8,1);
+  lcd.clear();
+}
+
+void loop() {
+int val1,val2;
+float ITS1,ITS2; 
+
+  val1=analogRead(analogPin1);
+  ITS1=val1*3.3/4095;
+  Serial.print("Value1: ");
+  Serial.print( val1);
+  Serial.print("  ITS1:");
+  Serial.println( ITS1);
+  lcd.print("ITS1: ");
+  lcd.print( ITS1);
+   if(ITS1>=1 && ITS1<=2)
+  {
+ digitalWrite(Relay,HIGH);
+ }
+ else
+ {
+  digitalWrite(Relay,LOW);
+ }
+  
+  val2=analogRead(analogPin2);
+  ITS2=val2*3.3/4095;
+  Serial.print("Value2: ");
+  Serial.print( val2);
+  Serial.print("  ITS2:");
+  Serial.println( ITS2);
+  lcd.setCursor(0,1);
+  lcd.print("ITS2: ");
+  lcd.print( ITS2);
+  
+ if(ITS2>=1 && ITS2<=2)
+  {
+ digitalWrite(Pump,HIGH);
+ }
+ else
+ {
+  digitalWrite(Pump,LOW);
+ }
+  delay(1000);
+  lcd.clear();
+  }
