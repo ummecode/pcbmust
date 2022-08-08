@@ -1,0 +1,241 @@
+
+#include<Arduino.h>
+#include<WiFiManager.h>
+#include<ArduinoOcpp.h>
+#include<ArduinoOcpp/Core/Configuration.h>
+#include <WiFi.h>
+
+#define AMPERAGE_PIN 12 //modulated as PWM
+
+#define EV_PLUG_PIN 34 // Input pin | Read if an EV is connected to the EVSE
+
+#define OCPP_CHARGE_PERMISSION_PIN 4 // Output pin | Signal if OCPP allows / forbids energy flow
+#define OCPP_CHARGE_PERMITTED HIGH
+#define OCPP_CHARGE_FORBIDDEN LOW
+
+#define EV_CHARGE_PIN 35 // Input pin | Read if EV requests energy (corresponds to SAE J1772 State C)
+
+#define OCPP_AVAILABILITY_PIN 13 // Output pin | Signal if this EVSE is out of order (set by Central System)
+#define OCPP_AVAILABLE HIGH
+#define OCPP_UNAVAILABLE LOW
+
+#define SERVER_CONNECT_LED 27 // Output pin | Signal if connection to OCPP server has succeeded
+#define SERVER_CONNECT_ON HIGH
+#define SERVER_CONNECT_OFF LOW
+
+#define CHARGE_PERMISSION_LED 2 // Output pin | Signal if OCPP allows / forbids energy flow
+#define CHARGE_PERMISSION_ON HIGH
+#define CHARGE_PERMISSION_OFF LOW
+
+#define ssid "razarabsnl"
+#define password  "708@MyBsnlWifi4$Test123"
+
+#define OCPP_HOST "echo.websocket.events"
+#define OCPP_PORT 80
+#define OCPP_URL "ws://echo.websocket.events/"
+
+WebSocketsClient wSock;
+ArduinoOcpp::EspWiFi::OcppClientSocket oSock{&wSock};
+
+int evPlugged = 0;
+
+bool booted = false;
+ulong scheduleReboot = 0; //0 = no reboot scheduled; otherwise reboot scheduled in X ms
+ulong reboot_timestamp = 0; //timestamp of the triggering event; if scheduleReboot=0, the timestamp has no meaning
+
+
+void setup() {
+    Serial.begin(115200);
+    Serial.setDebugOutput(true);
+    WiFi.begin(ssid, password);
+   Serial.print("Connecting to Wifi..");
+   
+   while (WiFi.status() != WL_CONNECTED) {
+        Serial.print('.');
+        delay(1000);
+    }
+   Serial.println("connected");
+   Serial.println(WiFi.localIP());
+   delay(1000);
+   
+   int val1,val2;
+   float ITS1,ITS2;
+    
+ val1=analogRead(EV_PLUG_PIN);
+  ITS1=val1*3.3/4095;
+  Serial.print("Value1: ");
+  Serial.print( val1);
+  Serial.print("  Ev plug:");
+  Serial.println( ITS1);
+  delay(1000);
+  
+val2=analogRead(EV_CHARGE_PIN);
+  ITS2=val2*3.3/4095;
+  Serial.print("Value2: ");
+  Serial.print( val2);
+  Serial.print("  Ev charge:");
+  Serial.println( ITS2);
+  delay(1000);
+  
+  
+   OCPP_initialize(OCPP_HOST, OCPP_PORT, OCPP_URL);
+   
+    
+    pinMode(OCPP_CHARGE_PERMISSION_PIN, OUTPUT);
+    digitalWrite(OCPP_CHARGE_PERMISSION_PIN, OCPP_CHARGE_FORBIDDEN);
+    pinMode(OCPP_AVAILABILITY_PIN, OUTPUT);
+    digitalWrite(OCPP_AVAILABILITY_PIN, OCPP_UNAVAILABLE);
+    pinMode(CHARGE_PERMISSION_LED, OUTPUT);
+    digitalWrite(CHARGE_PERMISSION_LED, CHARGE_PERMISSION_OFF);
+
+    pinMode(AMPERAGE_PIN, OUTPUT);
+    ledcSetup(0, 1000, 8); //channel=0, freq=1000Hz, range=(2^8)-1
+    ledcAttachPin(AMPERAGE_PIN, 0);
+    ledcWrite(0, 256); //256 is constant +3.3V DC
+
+    pinMode(SERVER_CONNECT_LED, OUTPUT);
+    digitalWrite(SERVER_CONNECT_LED, SERVER_CONNECT_ON); //signal device reboot
+    delay(100);
+    digitalWrite(SERVER_CONNECT_LED, SERVER_CONNECT_OFF);
+    
+    ArduinoOcpp::configuration_init(ArduinoOcpp::FilesystemOpt::Use_Mount_FormatOnFail);
+
+    std::shared_ptr<ArduinoOcpp::Configuration<const char *>> ocppUrl = ArduinoOcpp::declareConfiguration<const char *>(
+        "ocppUrl", "", CONFIGURATION_FN, false, false, true, true);
+    std::shared_ptr<ArduinoOcpp::Configuration<const char *>> CA_cert = ArduinoOcpp::declareConfiguration<const char *>(
+        "CA_cert", "", CONFIGURATION_FN, false, false, true, true);
+    std::shared_ptr<ArduinoOcpp::Configuration<const char *>> httpAuthentication = ArduinoOcpp::declareConfiguration<const char *>(
+        "httpAuthentication", "", CONFIGURATION_FN, false, false, true, true);
+    
+    /*
+     * Initialize ArduinoOcpp framework.
+     */
+    wSock.setReconnectInterval(5000);
+    wSock.enableHeartbeat(15000, 3000, 2);
+
+    if (httpAuthentication->getBuffsize() > 1) {
+        wSock.setAuthorization(*httpAuthentication);
+    }
+    
+    
+    OCPP_initialize(oSock,
+            /* Grid voltage */ 230.f, 
+            ArduinoOcpp::FilesystemOpt::Use_Mount_FormatOnFail, 
+            ArduinoOcpp::Clocks::DEFAULT_CLOCK);
+
+    /*
+     * Integrate OCPP functionality. You can leave out the following part if your EVSE doesn't need it.
+     */
+    setEnergyActiveImportSampler([]() {
+        //read the energy input register of the EVSE here and return the value in Wh
+        /*
+         * Approximated value. TODO: Replace with real reading
+         */
+        static ulong lastSampled = millis();
+        static float energyMeter = 0.f;
+        if (getTransactionId() > 0 && analogRead(EV_CHARGE_PIN) == 4095)
+            energyMeter += ((float) millis() - lastSampled) * 0.003f; //increase by 0.003Wh per ms (~ 10.8kWh per h)
+        lastSampled = millis();
+        return energyMeter;
+    });
+
+    setOnChargingRateLimitChange([](float limit) {
+        //set the SAE J1772 Control Pilot value here
+        Serial.print(F("[main] Smart Charging allows maximum charge rate: "));
+        Serial.println(limit);
+        float amps = limit / 230.f;
+        if (amps > 51.f)
+            amps = 51.f;
+
+        int pwmVal;
+        if (amps < 6.f) {
+            pwmVal = 256; // = constant +3.3V DC
+        } else {
+            pwmVal = (int) (4.26667f * amps);
+        }
+        
+       ledcWrite(0 , pwmVal);
+    });
+
+
+    
+     setEvRequestsEnergySampler([]() {
+        //return true if the EV is in state "Ready for charging" (see https://en.wikipedia.org/wiki/SAE_J1772#Control_Pilot)
+        return analogRead(EV_CHARGE_PIN) == 4095;
+    });
+    
+    setOnResetSendConf([] (JsonObject payload) {
+        if (getTransactionId() >= 0)
+            stopTransaction();
+        
+        reboot_timestamp = millis();
+        scheduleReboot = 5000;
+        booted = false;
+    });
+
+    /*
+     * Notify the Central System that this station is ready
+     */
+    bootNotification("My Charging Station", "My company name", [] (JsonObject payload) {
+        const char *status = payload["status"] | "INVALID";
+        if (!strcmp(status, "Accepted")) {
+
+            booted = true;
+            digitalWrite(SERVER_CONNECT_LED, SERVER_CONNECT_ON);
+        } else {
+            //retry sending the BootNotification
+            delay(60000);
+            ESP.restart();
+        }
+    });
+}
+
+
+
+void loop() {
+  
+ /*
+     * Do all OCPP stuff (process WebSocket input, send recorded meter values to Central System, etc.)
+     */
+    OCPP_loop();
+    
+    /*
+     * Detect if something physical happened at your EVSE and trigger the corresponding OCPP messages
+     */
+    if (/* RFID chip detected? */ false) {
+        const char *idTag = "my-id-tag"; //e.g. idTag = RFID.readIdTag();
+        authorize(idTag);
+    }
+
+    if (ocppPermitsCharge()) {
+        digitalWrite(OCPP_CHARGE_PERMISSION_PIN, OCPP_CHARGE_PERMITTED);
+        digitalWrite(CHARGE_PERMISSION_LED, CHARGE_PERMISSION_ON);
+    } else {
+        digitalWrite(OCPP_CHARGE_PERMISSION_PIN, OCPP_CHARGE_FORBIDDEN);
+        digitalWrite(CHARGE_PERMISSION_LED, CHARGE_PERMISSION_OFF);
+    }
+
+    if (!booted)
+        return;
+    if (scheduleReboot > 0 && millis() - reboot_timestamp >= scheduleReboot) {
+        ESP.restart();
+    }
+
+    if (analogRead(EV_PLUG_PIN) == 4095 && evPlugged == 0 && getTransactionId() >= 0) {
+        //transition unplugged -> plugged; Case A: transaction has already been initiated
+        evPlugged = 4095;
+    } else if (analogRead(EV_PLUG_PIN) == 4095 && evPlugged == 0 && isAvailable()) {
+        //transition unplugged -> plugged; Case B: no transaction running; start transaction
+        evPlugged = 4095;
+
+        startTransaction("my-id-tag");
+    } else if (analogRead(EV_PLUG_PIN) == 0 && evPlugged == 4095) {
+        //transition plugged -> unplugged
+        evPlugged = 0;
+
+        if (getTransactionId() >= 0)
+            stopTransaction();
+    }
+
+    //... see ArduinoOcpp.h for more possibilities
+}
