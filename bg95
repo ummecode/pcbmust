@@ -1,0 +1,68 @@
+void setup() {
+  Serial.begin(9600);
+  Serial2.begin(9600); //UART2 16 and 17
+  delay(3000);
+  test_bg95_module();
+  send_SMS();
+}
+void loop() {
+  updateSerial();
+}
+void test_bg95_module()
+{
+  Serial2.println("AT");   //Basic command to check communication done
+  updateSerial();
+  Serial.println();
+  Serial2.println("AT+CSQ"); // checks the signal strength
+  updateSerial();
+  Serial2.println("AT+CCID"); //checks the sim card number
+  updateSerial();
+  Serial2.println("AT+CIMI"); //checks the IMSI number
+  updateSerial();
+  Serial2.println("ATI"); // gets the module name and number
+  updateSerial();
+  Serial2.println("AT+CBC"); //returns the battery percentage
+  updateSerial();
+  Serial2.println("AT+CFUN=0"); //configure the module for BASIC functionality
+  updateSerial();
+  Serial2.println("AT+COPS=0"); //Set the mobile network operator selection to automatic
+  updateSerial();
+  Serial2.println("AT+CFUN=1"); //configure the module for full functionality
+  updateSerial();
+  Serial2.println("AT+CREG=1;+CGREG=1;+CEREG=1"); //Enable network registration
+  updateSerial();
+  Serial2.println("AT+COPS?"); //checks the network operator selection
+  updateSerial();
+  Serial2.println("AT+QCSQ"); // Check the active RAT and determine the signal strength
+  updateSerial();
+  Serial2.println("AT+CREG?;+CEREG?;+CGREG?"); //CGREG=Egprs network registration status;CEREG=LTE network registration status,creg=network registration status(1 or 5)
+  updateSerial();
+  Serial2.println("AT+CGAT=1"); //open a data context
+  updateSerial();
+  Serial2.println("AT+CGPADDR"); //checks THE allocated ip address
+  updateSerial();
+ }
+void updateSerial()
+{
+  delay(500);
+  while (Serial.available())
+  {
+    Serial2.write(Serial.read());//Forward what Serial received to Software Serial Port
+  }
+  while (Serial2.available())
+  {
+    Serial.write(Serial2.read());//Forward what Software Serial received to Serial Port
+  }
+}
+void send_SMS()
+{
+  Serial2.println("AT+CMGF=1"); // Configuring TEXT mode
+  updateSerial();
+  Serial2.println("AT+CMGS=\"+xxxxxxxxxxx\"");//change ZZ with country code and xxxxxxxxxxx with phone number to sms
+  updateSerial();
+  Serial2.print("Hello"); //text content
+  updateSerial();
+Serial.println();
+  Serial.println("Message Sent");
+  Serial2.write(26);
+}
