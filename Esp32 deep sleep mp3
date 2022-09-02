@@ -1,0 +1,478 @@
+#include <FastLED.h>
+#define LED_PIN     33
+#define NUM_LEDS    5
+#define LED_TYPE    WS2812
+#define COLOR_ORDER GRB
+CRGB leds[NUM_LEDS];
+CRGB count[10];
+#define BRIGHTNESS  64
+
+#include "Arduino.h"
+#include "DFRobotDFPlayerMini.h"
+
+#define RED 26
+#define YELLOW 25
+#define GREEN 14
+#define NEXT 22
+#define prev 23
+#define vu 21
+#define vd 19
+#define STOP 13
+#define vib 18
+#define VIBRATION 27
+
+
+DFRobotDFPlayerMini myDFPlayer;
+void printDetail(uint8_t type, int value);
+
+struct PushBnt{
+  const uint8_t pin;
+  uint32_t pressCount;
+  bool pressed;
+};
+PushBnt pushBtn = {GPIO_NUM_2, 0, false};
+uint8_t led_pin = GPIO_NUM_4;
+uint8_t wakeUp_pin = GPIO_NUM_32;
+TaskHandle_t taskBlinkled;
+void IRAM_ATTR isr_handle() {
+  pushBtn.pressed = true;
+  pushBtn.pressCount = pushBtn.pressCount + 1;
+}
+
+void setup() {
+  pinMode(RED,INPUT_PULLUP);
+  pinMode(YELLOW,INPUT_PULLUP);
+  pinMode(GREEN,INPUT_PULLUP);
+  pinMode(NEXT,INPUT_PULLUP);
+  pinMode(prev,INPUT_PULLUP);
+  pinMode(vu,INPUT_PULLUP);
+  pinMode(vd,INPUT_PULLUP);
+  pinMode(STOP,INPUT_PULLUP);
+  pinMode(VIBRATION,INPUT_PULLUP);
+  pinMode(vib,OUTPUT);
+  pinMode(pushBtn.pin, INPUT_PULLUP);
+  attachInterrupt(pushBtn.pin, isr_handle, FALLING);
+  pinMode(led_pin, OUTPUT);
+
+    FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
+    FastLED.setBrightness(  BRIGHTNESS );
+    FastLED.clear();
+    FastLED.show();
+    
+  Serial2.begin(9600);
+  Serial.begin(115200);
+ Serial.println();
+  Serial.println(F("DFRobot DFPlayer Mini Demo"));
+  Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
+  
+  if (!myDFPlayer.begin(Serial2)) {  //Use softwareSerial to communicate with mp3.
+    Serial.println(F("Unable to begin:"));
+    Serial.println(F("1.Please recheck the connection!"));
+    Serial.println(F("2.Please insert the SD card!"));
+    while(true);
+  }
+  Serial.println(F("DFPlayer Mini online."));
+  
+  myDFPlayer.setTimeOut(500); //Set serial communictaion time out 500ms
+  
+   xTaskCreate(
+              blinkLed,   /* Task function. */
+              "blinkLed",     /* name of task. */
+              1024*2,       /* Stack size of task */
+              NULL,        /* parameter of the task */
+              5,           /* priority of the task */
+              &taskBlinkled);      /* Task handle to keep track of created task */
+  delay(500);
+  esp_sleep_enable_ext0_wakeup((gpio_num_t)wakeUp_pin, 0);
+  
+  
+  
+  myDFPlayer.volume(10);  //Set volume value (0~30).
+ myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
+ myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
+
+  Serial.println(myDFPlayer.readVolume()); //read current volume
+  Serial.println(myDFPlayer.readEQ()); //read EQ setting
+   }
+   
+void loop() {
+  
+  if(digitalRead(RED)== 0){
+    Serial.println("RED:");
+ myDFPlayer.loopFolder(1); //loop all mp3 files in folder SD:/01
+  if(myDFPlayer.readCurrentFileNumber()==-1){
+  printDetail(myDFPlayer.readType(), myDFPlayer.read());
+  }
+ for(int k=0;k<=5;k++){
+  if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0 || pushBtn.pressed)
+       {
+        break;}
+        if(k==5)
+        {
+           FastLED.clear();
+    FastLED.show();
+    break;
+    }
+ button();
+  red();
+ }
+ }
+   
+    if(digitalRead(YELLOW)== 0){
+  
+   Serial.println("YELLOW");
+   myDFPlayer.loopFolder(3); //loop all mp3 files in folder SD:/03
+   Serial.println(myDFPlayer.readCurrentFileNumber());
+   if(myDFPlayer.readCurrentFileNumber()==-1){
+  printDetail(myDFPlayer.readType(), myDFPlayer.read());
+  }
+  for(int k=0;k<=5 ;k++){
+  if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0 || pushBtn.pressed)
+       {
+        break;}  
+         if(k==5)
+        {
+           FastLED.clear();
+    FastLED.show();
+   break;
+        }           
+        button();
+  yellow();
+ }
+   }
+     
+  if(digitalRead(GREEN)== 0){
+  Serial.println("Green");
+   myDFPlayer.loopFolder(2); //loop all mp3 files in folder SD:/02
+    Serial.println(myDFPlayer.readCurrentFileNumber());
+  if(myDFPlayer.readCurrentFileNumber()==-1){
+  printDetail(myDFPlayer.readType(), myDFPlayer.read());
+  }
+  for(int k=0;k<=5;k++){
+  if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0 || pushBtn.pressed)
+       {
+        break;}
+         if(k==5)
+        {
+           FastLED.clear();
+    FastLED.show();
+    break;
+        }
+        button();
+  green();
+ }
+  }
+   
+
+ 
+ 
+ if(digitalRead(STOP)==0){
+      myDFPlayer.pause();//pause the mp3
+      FastLED.clear();
+      FastLED.show();
+       Serial.println("STOP");
+     delay(1000);
+}
+
+if (myDFPlayer.available()) {
+    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+  }
+ 
+  
+  if(digitalRead(VIBRATION)==0){
+    myDFPlayer.pause();
+    FastLED.clear();
+    FastLED.show();
+    Serial.println("VIBRATE");
+       digitalWrite(vib,HIGH);
+     delay(20000);
+     digitalWrite(vib,LOW);
+   }
+  
+  if(digitalRead(NEXT)== 0){
+       myDFPlayer.next();  
+       Serial.println("NEXT");
+       Serial.println(myDFPlayer.readCurrentFileNumber());
+    if(myDFPlayer.readCurrentFileNumber()==-1){
+  printDetail(myDFPlayer.readType(), myDFPlayer.read());
+        }
+        }
+        
+       else if(digitalRead(prev)== 0){
+       myDFPlayer.previous();  
+       Serial.println("Prev");
+       Serial.println(myDFPlayer.readCurrentFileNumber());
+    if(myDFPlayer.readCurrentFileNumber()==-1){
+  printDetail(myDFPlayer.readType(), myDFPlayer.read());
+       }
+       }
+       
+       else if(digitalRead(vu)==0){
+      myDFPlayer.volumeUp();
+      Serial.print("VOL+:");
+    Serial.println(myDFPlayer.readVolume()); 
+       }
+       
+       else if(digitalRead(vd)==0){
+      myDFPlayer.volumeDown();
+      Serial.print("VOL-:");
+    Serial.println(myDFPlayer.readVolume()); 
+       }
+       
+ if (pushBtn.pressed) {
+       myDFPlayer.pause();
+       FastLED.clear();
+       FastLED.show();
+      Serial.printf("PushButton(%d) Pressed \n", pushBtn.pin);
+      Serial.printf("Suspend the 'blinkLed' Task \n");
+      vTaskSuspend( taskBlinkled );
+      digitalWrite(led_pin, LOW);     
+      Serial.printf("Going to sleep..... \n", pushBtn.pin);
+      pushBtn.pressed = false;
+       esp_deep_sleep_start();
+  }
+  esp_sleep_wakeup_cause_t wakeupReason;
+  wakeupReason = esp_sleep_get_wakeup_cause();
+  switch(wakeupReason)
+  {
+    case ESP_SLEEP_WAKEUP_EXT0  : Serial.println("using external signal ext0 for WakeUp From sleep"); break;
+    case ESP_SLEEP_WAKEUP_EXT1  : Serial.println("using external signal ext1 for WakeUp From sleep"); break;
+    case ESP_SLEEP_WAKEUP_TIMER  : Serial.println("using Timer signal for WakeUp From sleep"); break;
+    case ESP_SLEEP_WAKEUP_TOUCHPAD  : Serial.println("using TouchPad signal for WakeUp From sleep"); break;
+    case ESP_SLEEP_WAKEUP_ULP  : Serial.println("using ULP signal for WakeUp From sleep"); break;
+    default : break;
+    Serial.printf("Resume the 'blinkLed' Task \n");
+    vTaskResume( taskBlinkled );
+  }  
+}
+
+void blinkLed(void* param){  
+  while(1){
+    static uint32_t pin_val = 0;
+    pin_val ^= 1;
+    digitalWrite(led_pin, pin_val);
+    Serial.printf("Led ----------------- %s\n" , pin_val? "On" : "Off");   
+   vTaskDelay( 1000 / portTICK_PERIOD_MS );
+  }
+  taskBlinkled = NULL;
+  vTaskDelete( NULL );
+}
+
+void printDetail(uint8_t type, int value){
+  switch (type) {
+    case TimeOut:
+      Serial.println(F("Time Out!"));
+      break;
+    case WrongStack:
+      Serial.println(F("Stack Wrong!"));
+      break;
+    case DFPlayerCardInserted:
+      Serial.println(F("Card Inserted!"));
+      break;
+    case DFPlayerCardRemoved:
+      Serial.println(F("Card Removed!"));
+      break;
+    case DFPlayerCardOnline:
+      Serial.println(F("Card Online!"));
+      break;
+    case DFPlayerUSBInserted:
+      Serial.println("USB Inserted!");
+      break;
+    case DFPlayerUSBRemoved:
+      Serial.println("USB Removed!");
+      break;
+    case DFPlayerPlayFinished:
+      Serial.print(F("Number:"));
+      Serial.print(value);
+      Serial.println(F(" Play Finished!"));
+      break;
+    case DFPlayerError:
+      Serial.print(F("DFPlayerError:"));
+      switch (value) {
+        case Busy:
+          Serial.println(F("Card not found"));
+          break;
+        case Sleeping:
+          Serial.println(F("Sleeping"));
+          break;
+        case SerialWrongStack:
+          Serial.println(F("Get Wrong Stack"));
+          break;
+        case CheckSumNotMatch:
+          Serial.println(F("Check Sum Not Match"));
+          break;
+        case FileIndexOut:
+          Serial.println(F("File Index Out of Bound"));
+          break;
+        case FileMismatch:
+          Serial.println(F("Cannot Find File"));
+          break;
+        case Advertise:
+          Serial.println(F("In Advertise"));
+          break;
+        default:
+          break;
+      }
+      break;
+    default:
+      break;
+  }
+  }
+
+
+
+void red()
+{
+  count[0]=CRGB(255,0,0);//RED
+  count[1]=CRGB(136,8,8);//Blood red
+  count[2]=CRGB(238,75,43);//Bright red
+  count[3]=CRGB(128,0,32);//Burgandy
+  count[4]=CRGB(210,43,43);//Cadmium red
+  count[5]=CRGB(233,116,81);//Burnt sienna
+  count[6]=CRGB(210,4,45);//cherry
+  count[7]=CRGB(196,30,58);//cardinal red
+  count[8]=CRGB(220,20,60);//crimson
+  count[9]=CRGB(139,0,0);//Dark red
+  
+  for(int j=0;j<10;j++)
+  {
+    for(int i=0;i<5;i++){
+      leds[i]=count[j];
+        FastLED.show();
+        if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0 || pushBtn.pressed)
+       {
+        break;}
+       button();
+          delay(40);
+          if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0 || pushBtn.pressed)
+       {
+        break;}
+          button();
+         Serial.println(j);
+        }
+        if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0 ||pushBtn.pressed)
+       {
+        break;}
+       button();
+       delay(200);
+       if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0||pushBtn.pressed)
+       {
+        break;}
+        button();
+         }
+         }
+
+void yellow()
+{
+  count[0]=CRGB(255,191,0);
+  count[1]=CRGB(255,234,0);
+  count[2]=CRGB(253,218,13);
+  count[3]=CRGB(255,255,143);
+  count[4]=CRGB(255,192,0);
+  count[5]=CRGB(252,245,95);
+  count[6]=CRGB(250,250,51);
+  count[7]=CRGB(244,187,68);
+  count[8]=CRGB(250,218,94);
+  count[9]=CRGB(255,255,0);
+  
+  for(int j=0;j<10;j++)
+  {
+    
+    for(int i=0;i<5;i++){
+      leds[i]=count[j];
+        FastLED.show();
+       if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0 ||pushBtn.pressed)
+       {
+        break;}
+        button();
+          delay(40);
+          if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0 ||pushBtn.pressed)
+       {
+        break;}
+        button();
+         Serial.println(j);
+        }
+       if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0||pushBtn.pressed)
+       {
+        break;}
+        button();
+       delay(200);
+        if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)==0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0||pushBtn.pressed)
+       {
+        break;}
+        button();
+         }
+}
+void green()
+{
+  count[0]=CRGB(124,252,0);
+  count[1]=CRGB(50,205,50);
+  count[2]=CRGB(34,139,34);
+  count[3]=CRGB(0,100,0);
+  count[4]=CRGB(173,255,47);
+  count[5]=CRGB(0,255,127);
+  count[6]=CRGB(152,251,152);
+  count[7]=CRGB(46,139,87);
+  count[8]=CRGB(107,142,35);
+  count[9]=CRGB(0,128,0);
+  
+ for(int j=0;j<10;j++)
+  {
+     for(int i=0;i<5;i++){
+      leds[i]=count[j];
+        FastLED.show();
+       if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0||pushBtn.pressed)
+       {
+        break;}
+        button();
+          delay(40);
+          if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0||pushBtn.pressed)
+       {
+        break;}
+        button();
+         Serial.println(j);
+        }
+       if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0||pushBtn.pressed)
+       {
+        break;}
+        button();
+       delay(200);
+        if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(STOP)==0 || digitalRead(VIBRATION)==0||pushBtn.pressed)
+       {
+        break;}
+        button();
+         }
+  }
+  
+ void button(){
+
+        if(digitalRead(NEXT)== 0){
+       myDFPlayer.next();  
+       Serial.println("NEXT");
+       Serial.println(myDFPlayer.readCurrentFileNumber());
+    if(myDFPlayer.readCurrentFileNumber()==-1){
+  printDetail(myDFPlayer.readType(), myDFPlayer.read());
+        }
+        }
+        
+       else if(digitalRead(prev)== 0){
+       myDFPlayer.previous();  
+       Serial.println("Prev");
+       Serial.println(myDFPlayer.readCurrentFileNumber());
+    if(myDFPlayer.readCurrentFileNumber()==-1){
+  printDetail(myDFPlayer.readType(), myDFPlayer.read());
+       }
+       }
+       
+       else if(digitalRead(vu)==0){
+      myDFPlayer.volumeUp();
+      Serial.print("VOL+:");
+    Serial.println(myDFPlayer.readVolume()); 
+       }
+       
+       else if(digitalRead(vd)==0){
+      myDFPlayer.volumeDown();
+      Serial.print("VOL-:");
+    Serial.println(myDFPlayer.readVolume()); 
+       }
+        }
