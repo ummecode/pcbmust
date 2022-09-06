@@ -1,7 +1,7 @@
 
  #include <LiquidCrystal.h>
-const int rs=12,en=27,d4=26,d5=25,d6=33,d7=32;
-LiquidCrystal lcd(rs,en,d4,d5,d6,d7);
+const int rs=12,rw=14,en=27,d4=26,d5=25,d6=33,d7=32;
+LiquidCrystal lcd(rs,rw,en,d4,d5,d6,d7);
 
 const int analogPin1=34;
   const int analogPin2=35;
@@ -10,9 +10,10 @@ const int Pump=2;
 
 
 void setup() {
-  Serial.begin(115000);
+  Serial.begin(115200);
   digitalWrite(Relay, LOW);
   digitalWrite(Pump, LOW);
+  digitalWrite(rw,LOW);
   pinMode(Relay, OUTPUT);
   pinMode(Pump, OUTPUT);
   lcd.begin(8,1);
@@ -63,6 +64,7 @@ float ITS1,ITS2;
   delay(1000);
   lcd.clear();
   }
+
 
   
   
