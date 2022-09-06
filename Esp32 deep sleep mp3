@@ -50,7 +50,7 @@ void setup() {
   pinMode(prev,INPUT_PULLUP);
   pinMode(vu,INPUT_PULLUP);
   pinMode(vd,INPUT_PULLUP);
-  pinMode(STOP,INPUT_PULLUP);
+  
   pinMode(VIBRATION,INPUT_PULLUP);
   pinMode(vib,OUTPUT);
   pinMode(pushBtn.pin, INPUT_PULLUP);
