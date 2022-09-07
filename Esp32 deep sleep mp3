@@ -125,7 +125,8 @@ void loop() {
   printDetail(myDFPlayer.readType(), myDFPlayer.read());
   }
   for(int k=0;k<=5 ;k++){
-  if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead(RED)== 0 || digitalRead(VIBRATION)==0 || pushBtn.pressed)
+  if(digitalRead(YELLOW)== 0 || digitalRead(GREEN)==0 || digitalRead
+  (RED)== 0 || digitalRead(VIBRATION)==0 || pushBtn.pressed)
        {
         break;}  
          if(k==5)
@@ -208,7 +209,11 @@ if (myDFPlayer.available()) {
        }
        
  if (pushBtn.pressed) {
-       myDFPlayer.pause();
+  digitalWrite(LED_PIN,LOW);
+   digitalWrite(vib,LOW);
+    
+  
+  myDFPlayer.pause();
        FastLED.clear();
        FastLED.show();
       Serial.printf("PushButton(%d) Pressed \n", pushBtn.pin);
@@ -445,6 +450,9 @@ void green()
         
        else if(digitalRead(prev)== 0){
        myDFPlayer.previous();  
+
+
+       
        Serial.println("Prev");
        Serial.println(myDFPlayer.readCurrentFileNumber());
     if(myDFPlayer.readCurrentFileNumber()==-1){
@@ -464,4 +472,3 @@ void green()
     Serial.println(myDFPlayer.readVolume()); 
        }
         }
-      
