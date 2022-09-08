@@ -51,6 +51,7 @@ void setup() {
   pinMode(pushBtn.pin, INPUT_PULLUP);
   attachInterrupt(pushBtn.pin, isr_handle, FALLING);
   pinMode(led_pin, OUTPUT);
+  
 
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
     FastLED.setBrightness(  BRIGHTNESS );
@@ -62,6 +63,7 @@ void setup() {
  Serial.println();
   Serial.println(F("DFRobot DFPlayer Mini Demo"));
   Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
+  
   
   if (!myDFPlayer.begin(Serial2)) {  //Use softwareSerial to communicate with mp3.
     Serial.println(F("Unable to begin:"));
@@ -209,17 +211,19 @@ if (myDFPlayer.available()) {
        }
        
  if (pushBtn.pressed) {
-  digitalWrite(LED_PIN,LOW);
-   digitalWrite(vib,LOW);
-    
-  
-  myDFPlayer.pause();
-       FastLED.clear();
+  FastLED.clear();
        FastLED.show();
+ myDFPlayer.pause();
+       
       Serial.printf("PushButton(%d) Pressed \n", pushBtn.pin);
       Serial.printf("Suspend the 'blinkLed' Task \n");
       vTaskSuspend( taskBlinkled );
-      digitalWrite(led_pin, LOW);     
+      digitalWrite(led_pin, LOW); 
+      digitalWrite(LED_PIN,LOW);
+   digitalWrite(vib,LOW);
+   gpio_hold_en((gpio_num_t)LED_PIN);
+    gpio_hold_en((gpio_num_t)vib);
+   gpio_deep_sleep_hold_en();    
       Serial.printf("Going to sleep..... \n", pushBtn.pin);
       pushBtn.pressed = false;
        esp_deep_sleep_start();
