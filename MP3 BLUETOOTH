@@ -1,0 +1,1019 @@
+#include <FastLED.h>
+#define LED_PIN     33
+#define NUM_LEDS    5
+#define LED_TYPE    WS2812
+#define COLOR_ORDER GRB
+CRGB leds[NUM_LEDS];
+CRGB COUNT[10];
+#define BRIGHTNESS  64
+
+
+#include "Arduino.h"
+#include "DFRobotDFPlayerMini.h"
+#include "BluetoothSerial.h"
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+BluetoothSerial SerialBT;
+
+#define RED 26
+#define YELLOW 25
+#define GREEN 14
+#define NEXT 22
+#define prev 23
+#define vu 21
+#define vd 19
+#define STOP 13
+#define vib 18
+#define VIBRATION 27
+
+
+DFRobotDFPlayerMini myDFPlayer;
+void printDetail(uint8_t type, int value);
+int Count;
+
+void setup()
+{
+  pinMode(RED,INPUT);
+  pinMode(YELLOW,INPUT);
+  pinMode(GREEN,INPUT);
+  pinMode(NEXT,INPUT);
+  pinMode(prev,INPUT);
+  pinMode(vu,INPUT);
+  pinMode(vd,INPUT);
+  pinMode(STOP,INPUT);
+  pinMode(VIBRATION,INPUT);
+  pinMode(vib,OUTPUT);
+  
+    
+   FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
+    FastLED.setBrightness(  BRIGHTNESS );
+    FastLED.clear();
+    FastLED.show();
+    
+  Serial.begin(115200); 
+  SerialBT.begin("ESP32test"); //Bluetooth device name
+  Serial.println("The device started, now you can pair it with bluetooth!");
+  Serial2.begin(9600);
+  Serial.println();
+  Serial.println(F("DFRobot DFPlayer Mini Demo"));
+  Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
+  
+  if (!myDFPlayer.begin(Serial2)) {  //Use softwareSerial to communicate with mp3.
+    Serial.println(F("Unable to begin:"));
+    Serial.println(F("1.Please recheck the connection!"));
+    Serial.println(F("2.Please insert the SD card!"));
+    while(true);
+  }
+  Serial.println(F("DFPlayer Mini online."));
+  
+  myDFPlayer.setTimeOut(500); //Set serial communictaion time out 500ms
+  
+  
+  myDFPlayer.volume(10);  //Set volume value (0~30).
+ myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
+ myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
+
+  Serial.println(myDFPlayer.readVolume()); //read current volume
+  Serial.println(myDFPlayer.readEQ()); //read EQ setting
+ }
+
+void loop(){
+  
+  if(SerialBT.available()){
+
+    Count = SerialBT.read();
+     Serial.write(Count);
+    }
+    
+   Serial.print("COUNT:");
+  Serial.println( Count);
+
+  
+  if(Count==48){
+    Serial.println("RED:");
+ myDFPlayer.loopFolder(1);
+ if(Count==48)
+   {
+    Count=0;
+   }
+   bluetooth();
+}
+  
+ if(Count==49){
+ myDFPlayer.playFolder(1,1);
+
+  if(Count==49)
+   {
+    Count=0;
+   }
+   bluetooth();
+  
+ }
+ 
+ if(Count==50){
+ myDFPlayer.playFolder(1,2);
+ 
+   if(Count==50)
+   {
+    Count=0;
+   }
+   bluetooth();
+ 
+ }
+ if(Count==51){
+ myDFPlayer.playFolder(1,3);
+ 
+   if(Count==51)
+   {
+    Count=0;
+   }
+   bluetooth();
+
+ }
+ if(Count==52){
+ myDFPlayer.playFolder(1,4);
+ 
+   if(Count==52)
+   {
+    Count=0;
+   }
+   bluetooth();
+ 
+ }
+ if(Count==53){
+ myDFPlayer.playFolder(1,5);
+ 
+   if(Count==53)
+   {
+    Count=0;
+   }
+   bluetooth();
+ 
+ }
+ if(Count==54){
+ myDFPlayer.playFolder(1,6);
+
+   if(Count==54)
+   {
+    Count=0;
+   }
+   bluetooth();
+ 
+ }
+ if(Count==55){
+ myDFPlayer.playFolder(1,7);
+ 
+   if(Count==55)
+   {
+    Count=0;
+   }
+   bluetooth();
+ 
+ }
+ if(Count==56){
+myDFPlayer.playFolder(1,8);
+ 
+  if(Count==56)
+   {
+    Count=0;
+   }
+   bluetooth();
+
+ }
+ if(Count==57){
+myDFPlayer.playFolder(1,9);
+
+  if(Count==57)
+   {
+    Count=0;
+   }
+   bluetooth();
+
+ }
+ if(Count==58){
+ myDFPlayer.playFolder(1,10);
+ 
+  if(Count==58)
+   {
+    Count=0;
+   }
+   bluetooth();
+ }
+ 
+ if(Count==59){
+ myDFPlayer.playFolder(1,11);
+ 
+  if(Count==59)
+   {
+    Count=0;
+   }
+   bluetooth();
+ 
+ }
+ if(Count==60){
+ myDFPlayer.playFolder(1,12);
+ 
+  if(Count==60)
+   {
+    Count=0;
+   }
+   bluetooth();
+
+ }
+ if(Count==61){
+ myDFPlayer.playFolder(1,13);
+ 
+  if(Count==61)
+   {
+    Count=0;
+   }
+   bluetooth();
+
+ }
+ if(Count==62){
+ myDFPlayer.playFolder(1,14);
+ 
+  if(Count==62)
+   {
+    Count=0;
+   }
+   bluetooth();
+
+ }
+ if(Count==63){
+ myDFPlayer.playFolder(1,15);
+
+  if(Count==63)
+   {
+    Count=0;
+   }
+   bluetooth();
+ 
+ }
+ if(Count==64){
+ myDFPlayer.playFolder(1,16);
+ 
+  if(Count==64)
+   {
+    Count=0;
+   }
+   bluetooth();
+ 
+ }
+ if(Count==65){
+ myDFPlayer.playFolder(1,17);
+ 
+  if(Count==65)
+   {
+    Count=0;
+   }
+   bluetooth();
+
+ }
+ 
+ if(Count==66){
+ myDFPlayer.playFolder(1,18);
+ 
+  if(Count==66)
+   {
+    Count=0;
+   }
+   bluetooth();
+ }
+ 
+ 
+ if( Count==67){
+  Serial.println("YELLOW");
+    myDFPlayer.loopFolder(3); //loop all mp3 files in folder SD:/03
+   
+   if(Count==67)
+   {
+    Count=0;
+   }
+   bluetooth1();
+    }
+    
+    if(Count==68){
+ myDFPlayer.playFolder(3,1);
+ 
+   if(Count==68)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ 
+ }
+ if(Count==69){
+ myDFPlayer.playFolder(3,2);
+ 
+   if(Count==69)
+   {
+    Count=0;
+   }
+   bluetooth1();
+
+ }
+ if(Count==70){
+ myDFPlayer.playFolder(3,3);
+ 
+   if(Count==70)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ 
+ }
+ if(Count==71){
+ myDFPlayer.playFolder(3,4);
+ 
+   if(Count==71)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ 
+ }
+ if(Count==72){
+ myDFPlayer.playFolder(3,5);
+
+   if(Count==72)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ 
+ }
+ if(Count==73){
+ myDFPlayer.playFolder(3,6);
+ 
+   if(Count==73)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ 
+ }
+ if(Count==74){
+myDFPlayer.playFolder(3,7);
+ 
+  if(Count==74)
+   {
+    Count=0;
+   }
+   bluetooth1();
+
+ }
+ if(Count==75){
+myDFPlayer.playFolder(3,8);
+
+  if(Count==75)
+   {
+    Count=0;
+   }
+   bluetooth1();
+
+ }
+ if(Count==76){
+ myDFPlayer.playFolder(3,9);
+ 
+  if(Count==76)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ }
+ 
+ if(Count==77){
+ myDFPlayer.playFolder(3,10);
+ 
+  if(Count==77)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ 
+ }
+ if(Count==78){
+ myDFPlayer.playFolder(3,11);
+ 
+  if(Count==78)
+   {
+    Count=0;
+   }
+   bluetooth1();
+
+ }
+ if(Count==79){
+ myDFPlayer.playFolder(3,12);
+ 
+  if(Count==79)
+   {
+    Count=0;
+   }
+   bluetooth1();
+}
+if(Count==80){
+ myDFPlayer.playFolder(3,13);
+ 
+  if(Count==80)
+   {
+    Count=0;
+   }
+   bluetooth1();
+
+ }
+ if(Count==81){
+ myDFPlayer.playFolder(3,14);
+ 
+  if(Count==81)
+   {
+    Count=0;
+   }
+   bluetooth1();
+
+ }
+ if(Count==82){
+ myDFPlayer.playFolder(3,15);
+
+  if(Count==82)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ 
+ }
+ if(Count==83){
+ myDFPlayer.playFolder(3,16);
+ 
+  if(Count==83)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ 
+ }
+ if(Count==84){
+ myDFPlayer.playFolder(3,17);
+ 
+  if(Count==84)
+   {
+    Count=0;
+   }
+   bluetooth1();
+
+ }
+ 
+ if(Count==85){
+ myDFPlayer.playFolder(3,18);
+ 
+  if(Count==85)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ }
+  if(Count==86){
+ myDFPlayer.playFolder(3,19);
+ 
+  if(Count==86)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ 
+ }
+ if(Count==87){
+ myDFPlayer.playFolder(3,20);
+ 
+  if(Count==87)
+   {
+    Count=0;
+   }
+   bluetooth1();
+   }
+ 
+ if(Count==88){
+ myDFPlayer.playFolder(3,21);
+ 
+  if(Count==88)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ }
+ if(Count==89){
+ myDFPlayer.playFolder(3,22);
+ 
+  if(Count==89)
+   {
+    Count=0;
+   }
+   bluetooth1();
+   }
+ 
+ if(Count==90){
+ myDFPlayer.playFolder(3,23);
+ 
+  if(Count==90)
+   {
+    Count=0;
+   }
+   bluetooth1();
+ }
+ 
+ if(Count==91){
+  Serial.println("Green");
+    myDFPlayer.loopFolder(2); //loop all mp3 files in folder SD:/02
+    if(Count==91)
+   {
+    Count=0;
+   }
+   bluetooth2();
+   }
+   if(Count==92){
+ myDFPlayer.playFolder(2,1);
+ 
+  if(Count==92)
+   {
+    Count=0;
+   }
+   bluetooth2();
+}
+ 
+ if(Count==93){
+ myDFPlayer.playFolder(2,2);
+ 
+  if(Count==93)
+   {
+    Count=0;
+   }
+   bluetooth2();
+ }
+  if(Count==94){
+ myDFPlayer.playFolder(2,3);
+ 
+  if(Count==94)
+   {
+    Count=0;
+   }
+   bluetooth2();
+ 
+ }
+ if(Count==95){
+ myDFPlayer.playFolder(2,4);
+ 
+  if(Count==95)
+   {
+    Count=0;
+   }
+   bluetooth2();
+   }
+ 
+ if(Count==96){
+ myDFPlayer.playFolder(2,5);
+ 
+  if(Count==96)
+   {
+    Count=0;
+   }
+   bluetooth2();
+ }
+ if(Count==97){
+ myDFPlayer.playFolder(2,6);
+ 
+  if(Count==97)
+   {
+    Count=0;
+   }
+   bluetooth2();
+   }
+ 
+ if(Count==98){
+ myDFPlayer.playFolder(2,7);
+ 
+  if(Count==98)
+   {
+    Count=0;
+   }
+   bluetooth2();
+ }
+ if(Count==99){
+ myDFPlayer.playFolder(2,8);
+ 
+  if(Count==99)
+   {
+    Count=0;
+   }
+   bluetooth2();
+ }
+ 
+
+ else if( Count==103){
+      myDFPlayer.pause();//pause the mp3
+      FastLED.clear();
+      FastLED.show();
+       Serial.println("STOP");
+     delay(1000);
+     if(Count==103)
+   {
+    Count=0;
+   }
+}
+if (myDFPlayer.available()) {
+    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+  }
+ 
+  
+  if( Count==102){
+    FastLED.clear();
+    FastLED.show();
+    Serial.println("VIBRATE");
+       digitalWrite(vib,HIGH);
+     delay(20000);
+     digitalWrite(vib,LOW);
+     if(Count==102)
+   {
+    Count=0;
+   }
+   }
+   
+   
+       
+       else if(Count == 100){
+      myDFPlayer.volumeUp();
+      Serial.print("VOL+:");
+    Serial.println(myDFPlayer.readVolume()); 
+    if(Count==100)
+   {
+    Count=0;
+   }
+       }
+       
+       else if(Count == 101){
+      myDFPlayer.volumeDown();
+      Serial.print("VOL-:");
+    Serial.println(myDFPlayer.readVolume());
+    if(Count==101)
+   {
+    Count=0;
+   } 
+       }
+    }
+  
+
+void printDetail(uint8_t type, int value){
+  switch (type) {
+    case TimeOut:
+      Serial.println(F("Time Out!"));
+      break;
+    case WrongStack:
+      Serial.println(F("Stack Wrong!"));
+      break;
+    case DFPlayerCardInserted:
+      Serial.println(F("Card Inserted!"));
+      break;
+    case DFPlayerCardRemoved:
+      Serial.println(F("Card Removed!"));
+      break;
+    case DFPlayerCardOnline:
+      Serial.println(F("Card Online!"));
+      break;
+    case DFPlayerUSBInserted:
+      Serial.println("USB Inserted!");
+      break;
+    case DFPlayerUSBRemoved:
+      Serial.println("USB Removed!");
+      break;
+    case DFPlayerPlayFinished:
+      Serial.print(F("Number:"));
+      Serial.print(value);
+      Serial.println(F(" Play Finished!"));
+      break;
+    case DFPlayerError:
+      Serial.print(F("DFPlayerError:"));
+      switch (value) {
+        case Busy:
+          Serial.println(F("Card not found"));
+          break;
+        case Sleeping:
+          Serial.println(F("Sleeping"));
+          break;
+        case SerialWrongStack:
+          Serial.println(F("Get Wrong Stack"));
+          break;
+        case CheckSumNotMatch:
+          Serial.println(F("Check Sum Not Match"));
+          break;
+        case FileIndexOut:
+          Serial.println(F("File Index Out of Bound"));
+          break;
+        case FileMismatch:
+          Serial.println(F("Cannot Find File"));
+          break;
+        case Advertise:
+          Serial.println(F("In Advertise"));
+          break;
+        default:
+          break;
+      }
+      break;
+    default:
+      break;
+  }
+  }
+
+
+
+void red()
+{
+   
+  if(SerialBT.available()){
+
+    Count = SerialBT.read();
+     Serial.write(Count);
+    }
+    
+   Serial.print("COUNT:");
+  Serial.println( Count);
+
+  COUNT[0]=CRGB(255,0,0);//RED
+  COUNT[1]=CRGB(136,8,8);//Blood red
+  COUNT[2]=CRGB(238,75,43);//Bright red
+  COUNT[3]=CRGB(128,0,32);//Burgandy
+  COUNT[4]=CRGB(210,43,43);//Cadmium red
+  COUNT[5]=CRGB(233,116,81);//Burnt sienna
+  COUNT[6]=CRGB(210,4,45);//cherry
+  COUNT[7]=CRGB(196,30,58);//cardinal red
+  COUNT[8]=CRGB(220,20,60);//crimson
+  COUNT[9]=CRGB(139,0,0);//Dark red
+  
+  for(int j=0;j<10;j++)
+  {
+    for(int i=0;i<5;i++){
+      leds[i]=COUNT[j];
+        FastLED.show();
+        if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+       button();
+          delay(40);
+          if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+          button();
+         Serial.println(j);
+        }
+       if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+        {
+          break;}
+       button();
+       delay(200);
+       if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+        button();
+         }
+         }
+
+void yellow()
+{
+   if(SerialBT.available()){
+
+    Count = SerialBT.read();
+     Serial.write(Count);
+    }
+    
+   Serial.print("COUNT:");
+  Serial.println( Count);
+
+  COUNT[0]=CRGB(255,191,0);
+  COUNT[1]=CRGB(255,234,0);
+  COUNT[2]=CRGB(253,218,13);
+  COUNT[3]=CRGB(255,255,143);
+  COUNT[4]=CRGB(255,192,0);
+  COUNT[5]=CRGB(252,245,95);
+  COUNT[6]=CRGB(250,250,51);
+  COUNT[7]=CRGB(244,187,68);
+  COUNT[8]=CRGB(250,218,94);
+  COUNT[9]=CRGB(255,255,0);
+  
+  for(int j=0;j<10;j++)
+  {
+    
+    for(int i=0;i<5;i++){
+      leds[i]=COUNT[j];
+        FastLED.show();
+       if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+        button();
+          delay(40);
+         if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+        button();
+         Serial.println(j);
+        }
+       if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+        button();
+       delay(200);
+       if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+        button();
+         }
+}
+void green()
+{
+   if(SerialBT.available()){
+
+    Count = SerialBT.read();
+     Serial.write(Count);
+    }
+    
+   Serial.print("COUNT:");
+  Serial.println( Count);
+
+  COUNT[0]=CRGB(124,252,0);
+  COUNT[1]=CRGB(50,205,50);
+  COUNT[2]=CRGB(34,139,34);
+  COUNT[3]=CRGB(0,100,0);
+  COUNT[4]=CRGB(173,255,47);
+  COUNT[5]=CRGB(0,255,127);
+  COUNT[6]=CRGB(152,251,152);
+  COUNT[7]=CRGB(46,139,87);
+  COUNT[8]=CRGB(107,142,35);
+  COUNT[9]=CRGB(0,128,0);
+  
+ for(int j=0;j<10;j++)
+  {
+     for(int i=0;i<5;i++){
+      leds[i]=COUNT[j];
+        FastLED.show();
+      if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+        button();
+          delay(40);
+         if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+        {
+          break;}
+        button();
+         Serial.println(j);
+        }
+      if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+        button();
+       delay(200);
+        if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103){
+        break;}
+        button();
+         }
+}
+  
+  
+ void button(){
+   
+  if(SerialBT.available()){
+
+    Count = SerialBT.read();
+     Serial.write(Count);
+    }
+    
+   Serial.print("COUNT:");
+  Serial.println( Count);
+
+
+        if(Count == 100){
+      myDFPlayer.volumeUp();
+      Serial.print("VOL-:");
+    Serial.println(myDFPlayer.readVolume());
+    if(Count==100)
+   {
+    Count=0;
+   }
+       }
+       
+       else if(Count == 101){
+      myDFPlayer.volumeDown();
+      Serial.print("VOL-:");
+    Serial.println(myDFPlayer.readVolume());
+    if(Count==101)
+   {
+    Count=0;
+   }
+       }
+   else if( Count==102){
+    FastLED.clear();
+    FastLED.show();
+    Serial.println("VIBRATE");
+       digitalWrite(vib,HIGH);
+     delay(20000);
+     digitalWrite(vib,LOW);
+     if(Count==102)
+   {
+    Count=0;
+   }
+   }
+        }
+ 
+ void bluetooth(){
+   
+  if(SerialBT.available()){
+
+    Count = SerialBT.read();
+     Serial.write(Count);
+    }
+    
+   Serial.print("COUNT:");
+  Serial.println( Count);
+
+
+  Serial.println(myDFPlayer.readCurrentFileNumber());
+  if(myDFPlayer.readCurrentFileNumber()==-1){
+  printDetail(myDFPlayer.readType(), myDFPlayer.read());
+  } 
+   for(int k=0;k<=5;k++){
+if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+         if(k==5)
+        {
+           FastLED.clear();
+    FastLED.show();
+    break;
+        }
+      button();
+  red();
+  
+ }
+ }
+ void bluetooth1(){
+   
+  if(SerialBT.available()){
+
+    Count = SerialBT.read();
+     Serial.write(Count);
+    }
+    
+   Serial.print("COUNT:");
+  Serial.println( Count);
+
+
+  Serial.println(myDFPlayer.readCurrentFileNumber());
+  if(myDFPlayer.readCurrentFileNumber()==-1){
+  printDetail(myDFPlayer.readType(), myDFPlayer.read());
+  } 
+   for(int k=0;k<=5;k++){
+ if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+         if(k==5)
+        {
+           FastLED.clear();
+    FastLED.show();
+    break;
+        }
+      button();
+ yellow();
+  }
+ }
+ void bluetooth2(){
+   
+  if(SerialBT.available()){
+
+    Count = SerialBT.read();
+     Serial.write(Count);
+    }
+    
+   Serial.print("COUNT:");
+  Serial.println( Count);
+
+
+  Serial.println(myDFPlayer.readCurrentFileNumber());
+  if(myDFPlayer.readCurrentFileNumber()==-1){
+  printDetail(myDFPlayer.readType(), myDFPlayer.read());
+  } 
+   for(int k=0;k<=5;k++){
+ if(Count==48||Count==49||Count==50||Count==51||Count==52||Count==53||Count==54||Count==55||Count==56||Count==57||Count==58||Count==59||Count==60||Count==61||Count==62||Count==63||Count==64||Count==65||Count==66 ||Count==67||Count==68||Count==69||Count==70||Count==71||Count==72||Count==73||Count==74||Count==75||Count==76||Count==77||Count==78||Count==79||Count==80||Count==81||Count==82||Count==83||Count==84||Count==85||Count==86||Count==87||Count==88||Count==89||Count==90||Count==91||Count==92||Count==93||Count==94||Count==95||Count==96||Count==97||Count==98||Count==99||Count==103)
+       {
+        break;}
+         if(k==5)
+        {
+           FastLED.clear();
+    FastLED.show();
+    break;
+        }
+      button();
+ green();
+  }
+ }
+  
+ 
+ 
