@@ -1,4 +1,4 @@
-unsigned long event=5000;
+unsigned long event=3000;
 int buttonpushed=0;
 
 #include <LiquidCrystal.h>
