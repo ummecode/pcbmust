@@ -1,7 +1,9 @@
 unsigned long event=5000;
 int buttonpushed=0;
-#include <EEPROM.h>
+
 #include <LiquidCrystal.h>
+#include <Preferences.h>
+Preferences preferences;
 const int rs=12,rw=14,en=27,d4=26,d5=25,d6=33,d7=32;
 LiquidCrystal lcd(rs,rw,en,d4,d5,d6,d7);
 
@@ -10,7 +12,7 @@ LiquidCrystal lcd(rs,rw,en,d4,d5,d6,d7);
 const int analogPin1=34;
 const int analogPin2=35;
 //const int analogPin3=36;
-//  const int analogPin4=39;
+//const int analogPin4=39;
 
 const int Relay=15;
 const int Pump=2;
@@ -22,34 +24,38 @@ int k=118;
 int l=(5*(i-32))/9;
 int n=(5*(k-32))/9;
 int o,p;
-//float read_value;
 unsigned long timediff;
 unsigned long presstime,releasetime;
 bool flag1=0;
  int val1,val2,val3,val4,ITS1,ITS2;
 float VM1,VM11,VM2,VM22,V1,V2;
 int ITS1C,ITS2C; 
-int MX=10;
+int MF=10;
 
 
 
 void setup() {
   Serial.begin(9600);
+  preferences.begin("gpio",false);
   digitalWrite(Relay, LOW);
   digitalWrite(Pump, LOW);
   digitalWrite(rw,LOW);
   pinMode(Relay, OUTPUT);
   pinMode(Pump, OUTPUT);
-  pinMode(button1,INPUT_PULLUP);
-  pinMode(button2,INPUT_PULLUP);
-int read_value1=EEPROM.read(0);
-int read_value2=EEPROM.read(1);
-int read_value3=EEPROM.read(2);
-int read_value4=EEPROM.read(3);
+  pinMode(button1,INPUT);
+  pinMode(button2,INPUT);
+int read_value1=preferences.getInt("state1",i);
+int read_value2=preferences.getInt("state2",k);
+int read_value3=preferences.getInt("state3",l);
+int read_value4=preferences.getInt("state4",n);
 Serial.println(read_value1);
 Serial.println(read_value2);
 Serial.println(read_value3);
 Serial.println(read_value4);
+i=read_value1;
+k=read_value2;
+l=read_value3;
+n=read_value4;
   lcd.begin(8,1);
  lcd.clear();
 }
@@ -72,7 +78,7 @@ V1=(VM1)-(VM11);
 V2=(VM2)-(VM22);*/
 
 val1=analogRead(analogPin1);
-V1=val1*3.3*MX/4095;
+V1=val1*3.3/(4095*MF);
   ITS1C=(4*V1/0.00385)/(3.3-2*V1);
   ITS1=(9*ITS1C/5)+32;
   
@@ -116,7 +122,7 @@ V1=val1*3.3*MX/4095;
    M2();
   
    val2=analogRead(analogPin2);
-  V2=val2*3.3*MX/4095;
+  V2=val2*3.3/(4095*MF);
   ITS2C=4*V2/0.00385*(3.3-2*V2);
   ITS2=(9*ITS2C/5)+32;
   Serial.print("  V2:");
@@ -404,6 +410,7 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1&& o==0)
         j=2;
        delay(1000);
       }
+      
     if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {  
       if(timediff>=100 && timediff<=1000)
@@ -433,8 +440,7 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1&& o==0)
         lcd.setCursor(4,0);
         lcd.blink();
          
-        //EEPROM.write(0,i);
-       // EEPROM.commit();
+        
         delay(1000);
         timediff=0;
       }
@@ -885,7 +891,7 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 
 if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {  
-     if( timediff==0 && j==5 && k>i){
+    if( timediff==0 && j==5 && k>i){
       lcd.clear();
      Serial.print("B1:");
      Serial.print(i);
@@ -901,8 +907,8 @@ if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
         }
         lcd.print(i);
   lcd.print("F");
-  //EEPROM.write(0,i);
- // EEPROM.commit();
+  preferences.putInt("state1",i); 
+  
   delay(1000);
   lcd.clear();
      Serial.print("B2:");
@@ -919,12 +925,11 @@ if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
         }
         lcd.print(k);
   lcd.print("F");
-  // EEPROM.write(1,k);
-  // EEPROM.commit();
+  preferences.putInt("state2",k);
+  
   delay(1000);
      }
 }
-
 if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {  
      if( timediff==0 && j==5 && n>l){
@@ -943,8 +948,8 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
         }
         lcd.print(l);
   lcd.print("C");
-  // EEPROM.write(2,l);
-  // EEPROM.commit();
+  preferences.putInt("state3",l);
+  
   delay(1000);
   lcd.clear();
      Serial.print("B2:");
@@ -961,11 +966,12 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
         }
         lcd.print(n);
   lcd.print("C");
-  // EEPROM.write(3,n);
-   //EEPROM.commit();
+  preferences.putInt("state4",n);
+  
   delay(1000);
      }
 }
+     
      
      if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {
@@ -1051,7 +1057,7 @@ if( timediff>=500 && j==5  && m==5 &&  k>i && n>l ){
 //V1=(VM1)-(VM11);
 //V2=(VM2)-(VM22);
 val1=analogRead(analogPin1);
-V1=val1*3.3*MX/4095;
+V1=val1*3.3/(4095*MF);
   ITS1C=(4*V1/0.00385)/(3.3-2*V1);
   ITS1=(9*ITS1C/5)+32;
   
@@ -1092,7 +1098,7 @@ V1=val1*3.3*MX/4095;
  delay(2000);
  
   val2=analogRead(analogPin2);
-  V2=val2*3.3*MX/4095;
+  V2=val2*3.3/(4095*MF);
   ITS2C=4*V2/0.00385*(3.3-2*V2);
   ITS2=(9*ITS2C/5)+32;
   Serial.print("  V2:");
