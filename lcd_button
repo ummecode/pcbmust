@@ -70,7 +70,7 @@ Serial.print("VM1+: ");
 Serial.println( VM1,4);
 
 val4=analogRead(analogPin4);
-VM11=val4*3.3/(4095*MF);
+VM11=val4*3.3/4095;
 Serial.print("VM1-: ");
 Serial.println( VM11,4);
 
@@ -111,12 +111,24 @@ V1=val1*3.3/(4095*MF);
     }
     
   
-  if((ITS1>=i && ITS1<=k) ||( ITS1C>=l && ITS1C<=n) ){
+  if( o==1 && p==0){
+   
+   if(ITS1>=i && ITS2<=k) {
     digitalWrite(Relay,HIGH);
   }
   else{
     digitalWrite(Relay,LOW);
   }
+   }
+    else if( p==1 && o==0){
+     
+    if(ITS1C>=l && ITS1C<=n) {
+    digitalWrite(Relay,HIGH);
+  }
+  else{
+    digitalWrite(Relay,LOW);
+  }
+   }
 
    M1();
    M2();
@@ -127,7 +139,7 @@ V1=val1*3.3/(4095*MF);
    M1();
    M2();
   
-   val2=analogRead(analogPin2);
+ val2=analogRead(analogPin2);
   V2=val2*3.3/(4095*MF);
   ITS2C=(4*V2/0.00385)/(3.3-2*V2);
   ITS2=(9*ITS2C/5)+32;
@@ -157,12 +169,24 @@ V1=val1*3.3/(4095*MF);
   p=1;
   o=0;
     }
-  if((ITS2>=i && ITS2<=k) ||( ITS2C>=l && ITS2C<=n)){
+   if( o==1 && p==0){
+    
+   if(ITS2>=i && ITS2<=k) {
     digitalWrite(Pump,HIGH);
   }
   else{
     digitalWrite(Pump,LOW);
   }
+   }
+    else if( p==1 && o==0){
+     
+   if(ITS2C>=l && ITS2C<=n) {
+    digitalWrite(Pump,HIGH);
+  }
+  else{
+    digitalWrite(Pump,LOW);
+  }
+   }
     M1();
    M2();
   delay(1000);
