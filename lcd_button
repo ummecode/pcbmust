@@ -303,7 +303,7 @@ if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 }
     if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {
-    if((digitalRead(button1)==0 && buttonpushed>0)|| (digitalRead(button1)==1&& buttonpushed>0))
+    if(digitalRead(button1)==0 && buttonpushed>0)
     {
     unsigned long difference=millis()-buttonpushed;
     if(difference>=event)
@@ -925,15 +925,15 @@ if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
      Serial.print("B1:");
      Serial.print(i);
      Serial.println("F");
-     if(i>=0 && i<=9){
+   /*  if(i>=0 && i<=9){
         lcd.print("B1:  ");
           }
         else if(i>=10 && i<=99){
         lcd.print("B1: ");
           }
-         else{
+         else{*/
           lcd.print("B1:");
-        }
+      //  }
         lcd.print(i);
   lcd.print("F");
   preferences.putInt("state1",i); 
@@ -943,15 +943,15 @@ if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
      Serial.print("B2:");
      Serial.print(k);
      Serial.println("F");
-    if(k>=0 && k<=9){
+ /*   if(k>=0 && k<=9){
         lcd.print("B2:  ");
           }
         else if(k>=10 && k<=99){
         lcd.print("B2: ");
           }
-         else{
+         else{*/
           lcd.print("B2:");
-        }
+        //}
         lcd.print(k);
   lcd.print("F");
   preferences.putInt("state2",k);
@@ -967,15 +967,15 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
      Serial.print("B1:");
      Serial.print(l);
      Serial.println("C");
-     if(l>=0 && l<=9){
+    /* if(l>=0 && l<=9){
         lcd.print("B1:  ");
           }
         else if(l>=10 && l<=99){
         lcd.print("B1: ");
           }
-         else{
+         else{*/
           lcd.print("B1:");
-        }
+       // }
         lcd.print(l);
   lcd.print("C");
   preferences.putInt("state3",l);
@@ -985,15 +985,15 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
      Serial.print("B2:");
      Serial.print(n);
      Serial.println("C");
-    if(n>=0 && n<=9){
+  /*  if(n>=0 && n<=9){
         lcd.print("B2:  ");
           }
         else if(n>=10 && n<=99){
         lcd.print("B2: ");
           }
-         else{
+         else{*/
           lcd.print("B2:");
-        }
+        //}
         lcd.print(n);
   lcd.print("C");
   preferences.putInt("state4",n);
