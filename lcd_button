@@ -1,18 +1,19 @@
-        
-unsigned long event=3000;
+        unsigned long event=3000;
 int buttonpushed=0;
+ unsigned long difference;
 
 #include <LiquidCrystal.h>
 #include <Preferences.h>
 Preferences preferences;
 const int rs=12,rw=14,en=27,d4=26,d5=25,d6=33,d7=32;
 LiquidCrystal lcd(rs,rw,en,d4,d5,d6,d7);
+
 #define button1 5
 #define button2 17
 const int analogPin1=34;
 const int analogPin2=35;
-//const int analogPin3=36;
-  //const int analogPin4=39;
+const int analogPin3=36;
+  const int analogPin4=39;
 
 const int Relay=15;
 const int Pump=2;
@@ -24,10 +25,14 @@ int k=118;
 int l=(5*(i-32))/9;
 int n=(5*(k-32))/9;
 int o,p;
+int r,s=0;
 
 unsigned long timediff;
 unsigned long presstime,releasetime;
 bool flag1=0;
+unsigned long timediff1;
+unsigned long releasetime1;
+bool flag2=0;
  int val1,val2,val3,val4,ITS1,ITS2;
 float VM1,VM11,VM2,VM22,V1,V2;
 int ITS1C,ITS2C; 
@@ -62,8 +67,8 @@ n=read_value4;
 }
 
 void loop() {
-  
-   if((digitalRead(button1)==1 && digitalRead(button2)==1 && buttonpushed==0 )||(digitalRead(button1)==1 && digitalRead(button2)==0 && buttonpushed==0 )||(digitalRead(button1)==0 && digitalRead(button2)==1 && buttonpushed==0 )){
+if((digitalRead(button1)==1 && digitalRead(button2)==1 && buttonpushed>=0&&s==0 )||(digitalRead(button1)==1 && digitalRead(button2)==0 && buttonpushed>=0&&s==0 )||(digitalRead(button1)==0 && digitalRead(button2)==1 && buttonpushed>=0&&s==0 )){
+ 
   lcd.clear();
 /*val3=analogRead(analogPin3);
 VM1=val3*3.3/4095;
@@ -93,24 +98,38 @@ V1=val1*3.3/(4095*MF);
   Serial.print( ITS1);
   Serial.println( "F");
    Serial.println();
-    if( (timediff==0) || (timediff>=100 && timediff<=1500)){
-      lcd.clear();
+  if((timediff==0&& buttonpushed>=0) || (timediff1>=100&& timediff1<3000 && r==0&& buttonpushed>=0)){
+    lcd.clear();
   lcd.print("T1:");
   lcd.print(ITS1);
   lcd.print("F");
   o=1;
   p=0;
+  timediff=0;
+  if(ITS1>=i && ITS2<=k) {
+    digitalWrite(Relay,HIGH);
+  }
+  else{
+    digitalWrite(Relay,LOW);
+  }
     }
-  if( timediff>2000){
+  if((timediff1==99&& buttonpushed>=0 )|| (timediff>=100 && r==1 && buttonpushed>=0)){
     lcd.clear();
     lcd.print("T1:");
   lcd.print(ITS1C);
   lcd.print("C");
   p=1;
   o=0;
-  
-    }
-    
+  timediff1=99;
+  if(ITS1C>=l && ITS1C<=n) {
+    digitalWrite(Relay,HIGH);
+  }
+  else{
+    digitalWrite(Relay,LOW);
+  }
+ }
+ 
+
   
   if( o==1 && p==0){
    
@@ -121,6 +140,7 @@ V1=val1*3.3/(4095*MF);
     digitalWrite(Relay,LOW);
   }
    }
+   
     else if( p==1 && o==0){
      
     if(ITS1C>=l && ITS1C<=n) {
@@ -133,12 +153,16 @@ V1=val1*3.3/(4095*MF);
 
    M1();
    M2();
+   
   delay(1000);
    M1();
    M2();
+   
  delay(1000);
    M1();
    M2();
+   
+   
   
  val2=analogRead(analogPin2);
   V2=val2*3.3/(4095*MF);
@@ -152,24 +176,39 @@ V1=val1*3.3/(4095*MF);
    Serial.print(" ITS2 :");
   Serial.print( ITS2);
    Serial.println( "F");
-   lcd.setCursor(0,1);
-  if( (timediff==0) || (timediff>=100 && timediff<=1500)){
+  
+    if((timediff==0&& buttonpushed>=0) || (timediff1>=100&& timediff1<3000 && r==0&& buttonpushed>=0)){
     lcd.clear();
   lcd.print("T2:");
   lcd.print(ITS2);
   lcd.print("F");
   o=1;
   p=0;
+  timediff==0;
+  if(ITS2>=i && ITS2<=k) {
+    digitalWrite(Pump,HIGH);
+  }
+  else{
+    digitalWrite(Pump,LOW);
+  }
     }
  
-  if( timediff>2000){
+  if((timediff1==99&& buttonpushed>=0)|| (timediff>=100 &&r==1&& buttonpushed>=0 )){
     lcd.clear();
     lcd.print("T2:");
   lcd.print(ITS2C);
   lcd.print("C");
   p=1;
   o=0;
+  timediff1=99;
+  if(ITS2C>=l && ITS2C<=n) {
+    digitalWrite(Pump,HIGH);
+  }
+  else{
+    digitalWrite(Pump,LOW);
+  }
     }
+    
    if( o==1 && p==0){
     
    if(ITS2>=i && ITS2<=k) {
@@ -190,65 +229,80 @@ V1=val1*3.3/(4095*MF);
    }
     M1();
    M2();
+   
   delay(1000);
-   M1();
+    M1();
    M2();
+   
  delay(1000);
   M1();
    M2();
   
- if(digitalRead(Relay)==1 && buttonpushed==0)
+  
+ if(digitalRead(Relay)==1&& buttonpushed>=0)
   {
     lcd.clear();
  lcd.print("RELAY ON");
+    M1();
+   M2();
+   
+ delay(1000);
    M1();
    M2();
+   
  delay(1000);
   M1();
    M2();
- delay(1000);
- M1();
-   M2();
+  
  }
- if(digitalRead(Relay)==0 && buttonpushed==0)
+ if(digitalRead(Relay)==0&& buttonpushed>=0 )
  {
    lcd.clear();
   lcd.print("RELAYOFF");
-   M1();
-   M2();
-   delay(1000);
     M1();
    M2();
+   
+   delay(1000);
+     M1();
+   M2();
+  
  delay(1000);
  M1();
    M2();
+   
  }
  
-  if(digitalRead(Pump)==1&& buttonpushed==0)
+  if(digitalRead(Pump)==1&& buttonpushed>=0)
   {
  lcd.clear();
  lcd.print("PUMP ON");
- M1();
-   M2();
- delay(1000);
   M1();
    M2();
+   
  delay(1000);
-  M1();
+   M1();
    M2();
+   
+ delay(1000);
+   M1();
+   M2();
+   
  }
-  if(digitalRead(Pump)==0&& buttonpushed==0)
+  if(digitalRead(Pump)==0&& buttonpushed>=0)
  {
  lcd.clear();
  lcd.print("PUMP OFF");
- M1();
+  M1();
    M2();
+   
+ delay(1000);
+  M1();
+   M2();
+  
  delay(1000);
  M1();
    M2();
- delay(1000);
- M1();
-   M2();
+   
  }
  
   }
@@ -256,23 +310,37 @@ V1=val1*3.3/(4095*MF);
   Serial.println(millis());
   //delay(1000);
   
-if(digitalRead(button1)==0 && buttonpushed==0)
+if(digitalRead(button1)==0 && flag2==0)
   {
     buttonpushed=millis();
     Serial.print("buttonpushed:");
     Serial.println(buttonpushed);
+    flag2=1;
+    
    }
-   
-if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
+        
+        if(digitalRead(button1)==1&& flag2==1)
+        {
+          releasetime1=millis();
+          flag2=0;
+        Serial.print("releasetime1:");
+    Serial.println(releasetime1);
+    timediff1=releasetime1-buttonpushed;
+    Serial.print("timediff1:");
+    Serial.println(timediff1);
+    r=0;
+        }
+       
+   if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {
-    if(digitalRead(button1)==0 && buttonpushed>0)
+    
+    if(timediff1>=event && s==0)
     {
-    unsigned long difference=millis()-buttonpushed;
-    if(difference>=event)
-    {
+      s=1;
+    
       lcd.clear();
-      Serial.print("difference:");
-      Serial.println(difference);
+      Serial.print("timediff1");
+      Serial.println(timediff1);
      
      Serial.print("B1:");
      Serial.print(i);
@@ -298,20 +366,22 @@ if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
      Serial.print("buttonpushed:");
     Serial.println(buttonpushed);
     timediff=0;
+     timediff1=0;
       delay(3000);
     }
     }
-}
-    if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
+
+  
+ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {
-    if(digitalRead(button1)==0 && buttonpushed>0)
+   
+      
+   if(timediff1>=event && s==0)
     {
-    unsigned long difference=millis()-buttonpushed;
-    if(difference>=event)
-    {
+      s=1;
       lcd.clear();
-      Serial.print("difference:");
-      Serial.println(difference);
+      Serial.print("timediff1");
+      Serial.println(timediff1);
      
      Serial.print("B1:");
      Serial.print(l);
@@ -337,10 +407,12 @@ if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
      Serial.print("buttonpushed:");
     Serial.println(buttonpushed);
     timediff=0;
+     timediff1=0;
       delay(3000);
     }
     }
-}
+
+
 
      if(digitalRead(button2)==0 && flag1==0)
         {
@@ -360,13 +432,14 @@ if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
     timediff=releasetime-presstime;
     Serial.print("timediff:");
     Serial.println(timediff);
+    r=1;
         }
   
 if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {
-if(timediff>=100 && timediff<=1000)
+if(timediff>=100 && timediff<1500)
 {
-      if( j==1 && buttonpushed==-1 && m==0)
+      if( j==1  && m==0 &&s==1)
       {
         lcd.clear();
         i=i+100;
@@ -392,15 +465,16 @@ if(timediff>=100 && timediff<=1000)
         
         delay(1000);
         timediff=0;
+        timediff1=0;
         
       }
 }
 }
 if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1&& o==0)
 {
-  if(timediff>=100 && timediff<=1000)
+  if(timediff>=100 && timediff<1500)
 {
-      if( j==1 && buttonpushed==-1 && m==0)
+      if( j==1 &&m==0&&s==1)
       {
         lcd.clear();
         l=l+100;
@@ -426,6 +500,7 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1&& o==0)
         
         delay(1000);
         timediff=0;
+        timediff1=0;
         
       }
 }
@@ -433,19 +508,20 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1&& o==0)
 
       
       
-      if(digitalRead(button1)==0 && j==1 && buttonpushed==-1&&m==0 )
+      if(timediff1>=100 && timediff1<=1000&& j==1 &&m==0&&s==1 )
       {
         lcd.setCursor(4,0);
         lcd.blink();
      Serial.println("Cursor5");
         j=2;
        delay(1000);
+       timediff1=0;
       }
     if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {  
-      if(timediff>=100 && timediff<=1000)
+      if(timediff>=100 && timediff<1500)
 {
-        if( j==2 && buttonpushed==-1 && m==0)
+        if( j==2  && m==0&&s==1)
       {
         lcd.clear();
         i=i+10;
@@ -473,14 +549,15 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1&& o==0)
         
         delay(1000);
         timediff=0;
+        timediff1=0;
       }
 }
 }
 if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {  
-      if(timediff>=100 && timediff<=1000)
+      if(timediff>=100 && timediff<1500)
 {
-        if( j==2 && buttonpushed==-1 && m==0)
+        if( j==2  && m==0&&s==1)
       {
         lcd.clear();
         l=l+10;
@@ -507,24 +584,26 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
          
        delay(1000);
         timediff=0;
+        timediff1=0;
       }
 }
 }
       
-      if(digitalRead(button1)==0&& j==2 && buttonpushed==-1&&m==0 )
+      if(timediff1>=100 && timediff1<=1000&& j==2 &&m==0&&s==1 )
       {
        lcd.setCursor(5,0);
        lcd.blink();
          Serial.println("Cursor6");
         j=3;
         delay(1000);
+        timediff1=0;
       }
       
        if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {  
-      if(timediff>=100 && timediff<=1000)
+      if(timediff>=100 && timediff<1500)
 {
-        if( j==3 && buttonpushed==-1 &&m==0)
+        if( j==3 &&m==0&&s==1)
       {
         lcd.clear();
         i=i+1;
@@ -551,15 +630,16 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
          
         delay(1000);
         timediff=0;
+        timediff1=0;
       }
 }
 }
 
 if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {  
-      if(timediff>=100 && timediff<=1000)
+      if(timediff>=100 && timediff<1500)
 {
-         if( j==3 && buttonpushed==-1 &&m==0)
+         if( j==3 &&m==0&&s==1)
       {
         lcd.clear();
         l=l+1;
@@ -586,22 +666,24 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
          
        delay(1000);
         timediff=0;
+        timediff1=0;
       }
 }
 }
       
-      if(digitalRead(button1)==0&& j==3 && buttonpushed==-1&&m==0  )
+      if(timediff1>=100 && timediff1<=1000&& j==3 &&m==0&&s==1  )
       {
        lcd.setCursor(3,0);
        lcd.blink();
          Serial.println("Cursor4");
         j=1;
         delay(1000);
+        timediff1=0;
         }
 
         if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {  
-        if( timediff>=2000 && m==0 && buttonpushed==-1)
+        if( timediff>=1500 && m==0&&s==1)
         {
           lcd.clear();
         Serial.println("SAVE");
@@ -609,7 +691,7 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
      lcd.noBlink();
      delay(1000);
      lcd.clear();
-     //digitalWrite(Relay,LOW);
+     
      Serial.print("B2:");
      Serial.print(k);
      Serial.println("F");
@@ -627,6 +709,7 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
       lcd.setCursor(3,0);
       lcd.blink();
       timediff=0;
+      timediff1=0;
     
       Serial.println("Cursor4");
       m=1;
@@ -636,7 +719,7 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 
 if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {  
-        if( timediff>=2000 && m==0 && buttonpushed==-1)
+        if( timediff>=1500 && m==0&&s==1 )
         {
           lcd.clear();
         Serial.println("SAVE");
@@ -644,7 +727,7 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
      lcd.noBlink();
      delay(1000);
      lcd.clear();
-     //digitalWrite(Relay,LOW);
+     
      Serial.print("B2:");
      Serial.print(n);
      Serial.println("C");
@@ -662,7 +745,7 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
       lcd.setCursor(3,0);
       lcd.blink();
       timediff=0;
-     
+     timediff1=0;
       Serial.println("Cursor4");
       m=1;
       j=0;
@@ -670,9 +753,9 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 }
         if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {  
-        if(timediff>=100 && timediff<=1000){
+        if(timediff>=100 && timediff<1500){
 
-      if( m==1 && j==0 && buttonpushed==-1)
+      if( m==1 && j==0 &&s==1)
       {
         lcd.clear();
         k=k+100;
@@ -699,6 +782,7 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
         
         delay(1000);
         timediff=0;
+        timediff1=0;
         
       }
 }
@@ -706,9 +790,9 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
  
 if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {  
-        if(timediff>=100 && timediff<=1000){
+        if(timediff>=100 && timediff<1500){
 
-      if( m==1 && j==0 && buttonpushed==-1)
+      if( m==1 && j==0&&s==1 )
       {
         lcd.clear();
         n=n+100;
@@ -735,26 +819,29 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
         
           delay(1000);
         timediff=0;
+        timediff1=0;
         
       }
 }
 }
       
       
-      if(digitalRead(button1)==0 && m==1 &&j==0&& buttonpushed==-1 )
+      if(timediff1>=100 && timediff1<=1000 && m==1 &&j==0 &&s==1)
       {
         lcd.setCursor(4,0);
         lcd.blink();
      Serial.println("Cursor5");
         m=2;
        delay(1000);
+        timediff1=0;
+        
       }
       
       if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {  
-      if(timediff>=100 && timediff<=1000)
+      if(timediff>=100 && timediff<1500)
 {
-        if( m==2 &&j==0&& buttonpushed==-1)
+        if( m==2 &&j==0&&s==1)
       {
         lcd.clear();
         k=k+10;
@@ -781,14 +868,15 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
         
         delay(1000);
         timediff=0;
+        timediff1=0;
       }
 }
 }
 if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {  
-      if(timediff>=100 && timediff<=1000)
+      if(timediff>=100 && timediff<1500)
 {
-        if( m==2 &&j==0&& buttonpushed==-1)
+        if( m==2 &&j==0&&s==1)
       {
         lcd.clear();
         n=n+10;
@@ -815,24 +903,27 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
         
         delay(1000);
         timediff=0;
+        timediff1=0;
       }
 }
 }
 
       
-      if(digitalRead(button1)==0&& j==0 &&m==2&& buttonpushed==-1 )
+      if(timediff1>=100 && timediff1<=1000&& j==0 &&m==2&&s==1 )
       {
        lcd.setCursor(5,0);
        lcd.blink();
          Serial.println("Cursor6");
         m=3;
         delay(1000);
+        timediff1=0;
       }
+      
       if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {  
-      if(timediff>=100 && timediff<=1000)
+      if(timediff>=100 && timediff<1500)
 {
-        if( j==0 &&m==3&& buttonpushed==-1)
+        if( j==0 &&m==3&&s==1)
       {
         lcd.clear();
         k=k+1;
@@ -859,14 +950,15 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
          
        delay(1000);
         timediff=0;
+        timediff1=0;
       }
 }
 }
  if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {  
-      if(timediff>=100 && timediff<=1000)
+      if(timediff>=100 && timediff<1500)
 {
-        if( j==0 &&m==3&& buttonpushed==-1)
+        if( j==0 &&m==3&&s==1)
       {
         lcd.clear();
         n=n+1;
@@ -893,23 +985,25 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
          
         delay(1000);
         timediff=0;
+        timediff1=0;
       }
 }
 }
       
-      if(digitalRead(button1)==0&& m==3 && j==0&&buttonpushed==-1  )
+      if(timediff1>=100 && timediff1<=1000&& m==3 && j==0&&s==1 )
       {
        lcd.setCursor(3,0);
        lcd.blink();
          Serial.println("Cursor4");
         m=1;
         delay(1000);
+        timediff1=0;
         }
         
 
      if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {
-     if( timediff>=2000 && j==0 && k<=i)
+     if( timediff>=1500 && j==0 && k<=i&&s==1)
      {
       lcd.clear();
         Serial.println("B1>=B2");
@@ -940,11 +1034,13 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
       lcd.blink();
       m=1;
   timediff=0;
-     }
+timediff1=0;
 }
+}
+
 if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {
-    if( timediff>=2000 && j==0 && n<=l)
+    if( timediff>=1500 && j==0 && n<=l&&s==1)
      {
       lcd.clear();
         Serial.println("B1>=B2");
@@ -975,10 +1071,11 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
       lcd.blink();
       m=1;
   timediff=0;
+  timediff1=0;
      }
 }
 
-   if( timediff>=2000 && j==0 && buttonpushed==-1&& k>i && n>l )
+   if( timediff>=1500 && j==0 && k>i && n>l &&s==1)
         {
           m=5;
           j=5;
@@ -988,6 +1085,9 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
      lcd.noBlink();
      delay(1000);
      lcd.clear();
+     timediff=0;
+buttonpushed=0;
+
      if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {  
     Serial.print("B1:");
@@ -1003,8 +1103,9 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
    
          
   preferences.putInt("state2",k);
- 
-     }
+  timediff=0;
+buttonpushed=0;
+}
 if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {  
  
@@ -1020,13 +1121,15 @@ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
   
   }
 timediff=0;
-        }
+buttonpushed=0;
+
+}
         
 if( j==5  && m==5 &&  k>i && n>l ){
   
   lcd.clear();
  
- /*val3=analogRead(analogPin3);
+/* val3=analogRead(analogPin3);
 VM1=val3*3.3/(4095*MF);
 Serial.print("VM1+: ");
 Serial.println( VM1,4);
@@ -1052,6 +1155,7 @@ V1=val1*3.3/(4095*MF);
   Serial.print( ITS1);
   Serial.println( "F");
    Serial.println();
+   
    if( o==1 && p==0){
     lcd.clear();
   lcd.print("T1:");
@@ -1066,30 +1170,47 @@ V1=val1*3.3/(4095*MF);
     digitalWrite(Relay,LOW);
   }
    }
-   if( timediff>2000){
+   if(timediff1>=100 && r==0&& buttonpushed>=0){
+    lcd.clear();
+  lcd.print("T1:");
+  lcd.print(ITS1);
+  lcd.print("F");
+   lcd.noBlink();
+  o=1;
+  p=0;
+  timediff=0;
+   if(ITS1>=i && ITS1<=k) {
+    digitalWrite(Relay,HIGH);
+  }
+  else{
+    digitalWrite(Relay,LOW);
+  }
+    }
+  if((timediff1==99&& buttonpushed>=0 )|| (timediff>=100 && r==1 && buttonpushed>=0)){
     lcd.clear();
     lcd.print("T1:");
   lcd.print(ITS1C);
   lcd.print("C");
+   lcd.noBlink();
   p=1;
   o=0;
+  timediff1=99;
+  if(ITS1C>=l && ITS1C<=n) {
+    digitalWrite(Relay,HIGH);
   }
-   if  (timediff>=100 && timediff<=1500){
-      lcd.clear();
-  lcd.print("T1:");
-  lcd.print(ITS1);
-  lcd.print("F");
-  o=1;
-  p=0;
-    }
-    else if( p==1 && o==0){
+  else{
+    digitalWrite(Relay,LOW);
+  }
+ }
+ 
+  else if( p==1 && o==0){
       lcd.clear();
   lcd.print("T1:");
   lcd.print(ITS1C);
   lcd.print("C");
   lcd.noBlink();
   
- 
+  
    
    if(ITS1C>=l && ITS1C<=n) {
     digitalWrite(Relay,HIGH);
@@ -1099,10 +1220,13 @@ V1=val1*3.3/(4095*MF);
   }
    }
   
+  M3(); 
  M2();
  delay(1000);
+  M3(); 
  M2();
  delay(1000);
+ M3(); 
  M2();
   val2=analogRead(analogPin2);
   V2=val2*3.3/(4095*MF);
@@ -1116,7 +1240,7 @@ V1=val1*3.3/(4095*MF);
    Serial.print(" ITS2 :");
   Serial.print( ITS2);
    Serial.println( "F");
-   lcd.setCursor(0,1);
+   
    
   if( o==1 && p==0){
     lcd.clear();
@@ -1135,22 +1259,40 @@ V1=val1*3.3/(4095*MF);
   }
    }
    
-   if( timediff>2000){
+   if(timediff1>=100 && r==0&& buttonpushed>=0){
+    lcd.clear();
+  lcd.print("T2:");
+  lcd.print(ITS2);
+  lcd.print("F");
+  lcd.noBlink();
+  o=1;
+  p=0;
+  timediff==0;
+  if(ITS2>=i && ITS2<=k) {
+    digitalWrite(Pump,HIGH);
+  }
+  else{
+    digitalWrite(Pump,LOW);
+  }
+   }
+    
+ 
+  if((timediff1==99&& buttonpushed>=0)|| (timediff>=100 && r==1&& buttonpushed>=0 )){
     lcd.clear();
     lcd.print("T2:");
   lcd.print(ITS2C);
   lcd.print("C");
   p=1;
   o=0;
+  timediff1=99;
+  if(ITS2C>=l && ITS2C<=n) {
+    digitalWrite(Pump,HIGH);
+  }
+  else{
+    digitalWrite(Pump,LOW);
+  }
     }
-    if(timediff>=100 && timediff<=1500){
-    lcd.clear();
-  lcd.print("T2:");
-  lcd.print(ITS2);
-  lcd.print("F");
-  o=1;
-  p=0;
-    }
+    
     else if( p==1 && o==0){
       lcd.clear();
   lcd.print("T2:");
@@ -1158,91 +1300,122 @@ V1=val1*3.3/(4095*MF);
   lcd.print("C");
   lcd.noBlink();
 
-  
-   
-   if(ITS2C>=l && ITS2C<=n) {
+  if(ITS2C>=l && ITS2C<=n) {
     digitalWrite(Pump,HIGH);
   }
   else{
     digitalWrite(Pump,LOW);
   }
    }
-  
+ M3(); 
  M2();
  delay(1000);
+  M3(); 
  M2();
  delay(1000);
+  M3(); 
  M2();
  
-if(digitalRead(Relay)==1)
+if(digitalRead(Relay)==1&& buttonpushed>=0)
   {
     lcd.clear();
  lcd.print("RELAY ON");
- lcd.noBlink();
-
- M2();
- delay(1000);
- M2();
- delay(1000);
- M2();
- }
- else
- {
-  lcd.clear();
-  lcd.print("RELAYOFF");
-  lcd.noBlink();
+    M3();
    M2();
+   
  delay(1000);
- M2();
+   M3();
+   M2();
+   
  delay(1000);
- M2();
-}
+  M3();
+   M2();
+  
+ }
+ if(digitalRead(Relay)==0&& buttonpushed>=0 )
+ {
+   lcd.clear();
+  lcd.print("RELAYOFF");
+    M3();
+   M2();
+   
+   delay(1000);
+     M3();
+   M2();
+  
+ delay(1000);
+ M3();
+   M2();
+   
+ }
  
-  if(digitalRead(Pump)==1)
+  if(digitalRead(Pump)==1&& buttonpushed>=0)
   {
  lcd.clear();
  lcd.print("PUMP ON");
- lcd.noBlink();
-M2();
+  M3();
+   M2();
+   
  delay(1000);
- M2();
+   M3();
+   M2();
+   
  delay(1000);
- M2();
-
+   M3();
+   M2();
+   
  }
- else
+  if(digitalRead(Pump)==0&& buttonpushed>=0)
  {
  lcd.clear();
  lcd.print("PUMP OFF");
- lcd.noBlink();
- M2();
+  M3();
+   M2();
+   
  delay(1000);
- M2();
+  M3();
+   M2();
+  
  delay(1000);
- M2();
-}
- 
+ M3();
+   M2();
+   
  }
 }
-  
+}
 void M1()
-{  
-if(digitalRead(button1)==0 && buttonpushed==0)
+{ 
+  
+if(digitalRead(button1)==0 && flag2==0)
   {
     buttonpushed=millis();
     Serial.print("buttonpushed:");
     Serial.println(buttonpushed);
+    flag2=1;
    }
+        
+        if(digitalRead(button1)==1&& flag2==1)
+        {
+          releasetime1=millis();
+          flag2=0;
+        Serial.print("releasetime1:");
+    Serial.println(releasetime1);
+    timediff1=releasetime1-buttonpushed;
+    Serial.print("timediff1:");
+    Serial.println(timediff1);
+    r=0;
+        }
+       
    if(ITS1>=32 && ITS1<=212 && ITS2>=32 && ITS2<=212 && o==1 && p==0)
 {
-    if(digitalRead(button1)==0 && buttonpushed>0)
+   
+    if(timediff1>=event && s==0)
     {
-    unsigned long difference=millis()-buttonpushed;
-    if(difference>=event)
-    {
+      s=1;
+    
       lcd.clear();
-      Serial.print("difference:");
-      Serial.println(difference);
+      Serial.print("timediff1");
+      Serial.println(timediff1);
      
      Serial.print("B1:");
      Serial.print(i);
@@ -1268,20 +1441,23 @@ if(digitalRead(button1)==0 && buttonpushed==0)
      Serial.print("buttonpushed:");
     Serial.println(buttonpushed);
     timediff=0;
+    timediff1=0;
+    
       delay(3000);
     }
     }
-}
-    if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
+
+  
+ if(ITS1C>=0 && ITS1C<=100 && ITS2C>=0 && ITS2C<=100 && p==1 && o==0)
 {
-    if(digitalRead(button1)==0 && buttonpushed>0)
+   
+   if(timediff1>=event && s==0)
     {
-    unsigned long difference=millis()-buttonpushed;
-    if(difference>=event)
-    {
+      s=1;
+    
       lcd.clear();
-      Serial.print("difference:");
-      Serial.println(difference);
+      Serial.print("timediff1");
+      Serial.println(timediff1);
      
      Serial.print("B1:");
      Serial.print(l);
@@ -1307,11 +1483,12 @@ if(digitalRead(button1)==0 && buttonpushed==0)
      Serial.print("buttonpushed:");
     Serial.println(buttonpushed);
     timediff=0;
+    timediff1=0;
       delay(3000);
     }
     }
 }
-}
+
 
 void M2(){
   
@@ -1334,7 +1511,32 @@ void M2(){
     timediff=releasetime-presstime;
     Serial.print("timediff:");
     Serial.println(timediff);
+    r=1;
         }
 }
+void M3()
+{ 
   
+if(digitalRead(button1)==0 && flag2==0)
+  {
+    buttonpushed=millis();
+    Serial.print("buttonpushed:");
+    Serial.println(buttonpushed);
+    flag2=1;
+   }
+        
+        if(digitalRead(button1)==1&& flag2==1)
+        {
+          releasetime1=millis();
+          flag2=0;
+        Serial.print("releasetime1:");
+    Serial.println(releasetime1);
+    timediff1=releasetime1-buttonpushed;
+    Serial.print("timediff1:");
+    Serial.println(timediff1);
+    r=0;
+        }
+}
+
   
+          
