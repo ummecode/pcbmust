@@ -1135,7 +1135,7 @@ buttonpushed=0;
 if( j==5  && m==5 &&  k>i && n>l ){
   
   lcd.clear();
- 
+ lcd.noBlink();
 /* val3=analogRead(analogPin3);
 VM1=val3*3.3/(4095*MF);
 Serial.print("VM1+: ");
