@@ -1135,7 +1135,7 @@ buttonpushed=0;
 if( j==5  && m==5 &&  k>i && n>l ){
   
   lcd.clear();
- lcd.noBlink();
+
 /* val3=analogRead(analogPin3);
 VM1=val3*3.3/(4095*MF);
 Serial.print("VM1+: ");
@@ -1293,6 +1293,7 @@ V1=val1*3.3/(4095*MF);
     lcd.print("T2:");
   lcd.print(ITS2C);
   lcd.print("C");
+  lcd.noBlink();
   p=1;
   o=0;
   timediff1=99;
@@ -1333,6 +1334,7 @@ if(digitalRead(Relay)==1&& buttonpushed>=0)
   {
     lcd.clear();
  lcd.print("RELAY ON");
+ lcd.noBlink();
     M1();
    M2();
    
@@ -1349,6 +1351,7 @@ if(digitalRead(Relay)==1&& buttonpushed>=0)
  {
    lcd.clear();
   lcd.print("RELAYOFF");
+  lcd.noBlink();
     M1();
    M2();
    
@@ -1366,6 +1369,7 @@ if(digitalRead(Relay)==1&& buttonpushed>=0)
   {
  lcd.clear();
  lcd.print("PUMP ON");
+ lcd.noBlink();
   M1();
    M2();
    
@@ -1382,6 +1386,7 @@ if(digitalRead(Relay)==1&& buttonpushed>=0)
  {
  lcd.clear();
  lcd.print("PUMP OFF");
+ lcd.noBlink();
   M1();
    M2();
    
