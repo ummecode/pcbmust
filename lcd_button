@@ -70,18 +70,6 @@ void loop() {
 if((digitalRead(button1)==1 && digitalRead(button2)==1 && buttonpushed>=0&&s==0 && j==0&& m==0 )||(digitalRead(button1)==1 && digitalRead(button2)==0 && buttonpushed>=0&&s==0 &&j==0&& m==0)||(digitalRead(button1)==0 && digitalRead(button2)==1 && buttonpushed>=0&&s==0 &&j==0&& m==0)){
  
   lcd.clear();
-/*val3=analogRead(analogPin3);
-VM1=val3*3.3/4095;
-Serial.print("VM1+: ");
-Serial.println( VM1,4);
-
-val4=analogRead(analogPin4);
-VM11=val4*3.3/4095;
-Serial.print("VM1-: ");
-Serial.println( VM11,4);
-
-V1=(VM1)-(VM11);
-V2=(VM2)-(VM22);*/
 
 val1=analogRead(analogPin1);
 V1=val1*3.3/(4095*MF);
@@ -106,7 +94,7 @@ V1=val1*3.3/(4095*MF);
   o=1;
   p=0;
   timediff=0;
-  if(ITS1>=i && ITS2<=k) {
+  if(ITS1>=i && ITS1<=k) {
     digitalWrite(Relay,HIGH);
   }
   else{
