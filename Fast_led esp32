@@ -1,0 +1,303 @@
+#include <FastLED.h>
+#define LED_PIN1     33
+#define LED_PIN2     26
+#define LED_PIN3     25
+#define LED_PIN4     14
+#define NUM_LEDS_PER_STRIP  5
+#define NUM_STRIPS 4
+#define LED_TYPE    WS2812
+#define COLOR_ORDER GRB
+CRGB leds1[NUM_LEDS_PER_STRIP ];
+CRGB leds2[NUM_LEDS_PER_STRIP ];
+CRGB leds3[NUM_LEDS_PER_STRIP ];
+CRGB leds4[NUM_LEDS_PER_STRIP ];
+CRGB count[10];
+#define BRIGHTNESS  64
+int p,s=0;
+int c=0;
+
+void setup() {
+  Serial.begin(115200);
+FastLED.addLeds<LED_TYPE, LED_PIN1, COLOR_ORDER>(leds1, NUM_LEDS_PER_STRIP);
+ FastLED.addLeds<LED_TYPE, LED_PIN2, COLOR_ORDER>(leds2,NUM_LEDS_PER_STRIP);
+ FastLED.addLeds<LED_TYPE, LED_PIN3, COLOR_ORDER>(leds3, NUM_LEDS_PER_STRIP);
+ FastLED.addLeds<LED_TYPE, LED_PIN4, COLOR_ORDER>(leds4,NUM_LEDS_PER_STRIP);
+    FastLED.setBrightness(  BRIGHTNESS );
+    FastLED.clear();
+    FastLED.show();
+    }
+    
+void loop() {
+  count[0]=CRGB(255,0,0);//RED
+  count[1]=CRGB(136,8,8);//Blood red
+  count[2]=CRGB(238,75,43);//Bright red
+  count[3]=CRGB(128,0,32);//Burgandy
+  count[4]=CRGB(210,43,43);//Cadmium red
+  count[5]=CRGB(233,116,81);//Burnt sienna
+  count[6]=CRGB(210,4,45);//cherry
+  count[7]=CRGB(196,30,58);//cardinal red
+  count[8]=CRGB(220,20,60);//crimson
+  count[9]=CRGB(139,0,0);//Dark red
+  
+  if(c==0){
+  for(p=s;p<=4;p=p++){
+    count[0]=CRGB(255,0,0);
+    leds1[p]=count[0];
+    FastLED.show();
+    Serial.print("1");
+    delay(40);
+       M1();
+    
+  }
+  }
+
+if(c==1){
+   for(p=s;p<=4;p=p++){
+   count[1]=CRGB(136,8,8);
+ leds1[p]=count[1];
+        FastLED.show();
+        Serial.print("a");
+        delay(40);
+       M1();
+ 
+  }
+  }
+  if(c==2){
+   for(p=s;p<=4;p=p++){
+   count[2]=CRGB(238,75,43);
+  leds1[p]=count[2];
+        FastLED.show();
+        Serial.print("1");
+        delay(40);
+       M1();
+  }
+
+  }
+  if(c==3){
+   for(p=s;p<=4;p=p++){
+   count[3]=CRGB(128,0,32);
+ leds1[p]=count[3];
+        FastLED.show();
+        Serial.print("a");
+        delay(40);
+       M1();
+  
+  }
+  }
+}
+  
+void M1(){
+count[0]=CRGB(255,191,0);
+  count[1]=CRGB(255,234,0);//yellow
+  count[2]=CRGB(253,218,13);
+  count[3]=CRGB(255,255,143);
+  count[4]=CRGB(255,192,0);
+  count[5]=CRGB(252,245,95);
+  count[6]=CRGB(250,250,51);
+  count[7]=CRGB(244,187,68);
+  count[8]=CRGB(250,218,94);
+  count[9]=CRGB(255,255,0);
+  if(c==0){  
+  for(p=s;p<=4;p=p++){
+    count[0]=CRGB(255,191,0);
+   leds2[p]=count[0];
+    FastLED.show();
+    Serial.print("2");
+    delay(40);
+       M2();
+  }
+  }
+ 
+  if(c==1){
+   for(p=s;p<=4;p=p++){
+   count[1]=CRGB(255,234,0);
+   leds2[p]=count[1];
+        FastLED.show();
+        Serial.print("b");
+        delay(40);
+       M2();
+  }
+  }
+
+  
+   if(c==2){
+   for(p=s;p<=4;p=p++){
+   count[2]=CRGB(253,218,13);
+  leds2[p]=count[2];
+        FastLED.show();
+        Serial.print("2");
+        delay(40);
+       M2();
+  }
+  }
+ 
+  if(c==3){
+   for(p=s;p<=4;p=p++){
+   count[3]=CRGB(255,255,143);
+ leds2[p]=count[3];
+        FastLED.show();
+        Serial.print("b");
+        delay(40);
+       M2();
+  }
+  }
+ 
+}
+
+
+void M2(){
+ count[0]=CRGB(124,252,0);//green
+  count[1]=CRGB(50,205,50);
+  count[2]=CRGB(34,139,34);
+  count[3]=CRGB(0,100,0);
+  count[4]=CRGB(173,255,47);
+  count[5]=CRGB(0,255,127);
+  count[6]=CRGB(152,251,152);
+  count[7]=CRGB(46,139,87);
+  count[8]=CRGB(107,142,35);
+  count[9]=CRGB(0,128,0);
+if(c==0){  
+  for(p=s;p<=4;p=p++){
+    count[0]=CRGB(124,252,0);
+   leds3[p]=count[0];
+    FastLED.show();
+    Serial.print("3");
+    delay(40);
+       M3();
+  }
+  }
+
+if(c==1){
+   for(p=s;p<=4;p=p++){
+   count[1]=CRGB(50,205,50);
+ leds3[p]=count[1];
+        FastLED.show();
+        Serial.print("c");
+        delay(40);
+       M3();
+  }
+  }
+  
+  
+  if(c==2){
+   for(p=s;p<=4;p=p++){
+   count[2]=CRGB(34,139,34);
+  leds3[p]=count[2];
+        FastLED.show();
+        Serial.print("3");
+        delay(40);
+       M3();
+  }
+  }
+ 
+  
+  if(c==3){
+   for(p=s;p<=4;p=p++){
+   count[3]=CRGB(0,100,0);
+    leds3[p]=count[3];
+        FastLED.show();
+        Serial.print("c");
+        delay(40);
+       M3();
+  }
+  }
+
+  
+}
+
+void M3()
+{
+count[0]=CRGB(0,255,255);//blue
+  count[1]=CRGB(240,255,255);
+  count[2]=CRGB(137,207,240);
+  count[3]=CRGB(0,0,255);
+  count[4]=CRGB(115,147,179);
+  count[5]=CRGB(8,143,143);
+  count[7]=CRGB(95,158,160);
+  count[8]=CRGB(0,71,171);
+  count[9]=CRGB(100,149,237);
+  
+  if(c==0){  
+  for(p=s;p<=4;p=p++){
+    count[0]=CRGB(0,255,255);
+  leds4[p]=count[0];
+    FastLED.show();
+    Serial.println("4");
+    delay(40);
+    s=s+1;
+   
+       loop();
+       if(s==5)
+       {
+        s=0;
+        
+        c=1;
+        delay(1000);
+        loop();
+       }
+
+  }
+  }
+  if(c==1){
+   for(p=s;p<=4;p=p++){
+   count[1]=CRGB(240,255,255);
+    leds4[p]=count[1];
+        FastLED.show();
+        Serial.println("d");
+        delay(40);
+        s=s+1;
+   
+      loop();
+        if(s==5)
+       {
+        s=0;
+        c=2;
+        delay(1000);
+       loop();
+       }
+ 
+  }
+  }
+  
+  if(c==2){
+   for(p=s;p<=4;p=p++){
+   count[2]=CRGB(137,207,240);
+  leds4[p]=count[2];
+        FastLED.show();
+        Serial.println("4");
+        delay(40);
+        s=s+1;
+   
+       loop();
+        if(s==5)
+       {
+        s=0;
+        c=3;
+        delay(1000);
+       loop();
+       }
+  }
+  }
+  
+  if(c==3){
+   for(p=s;p<=4;p=p++){
+   count[3]=CRGB(0,0,255);
+ leds4[p]=count[3];
+        FastLED.show();
+        Serial.println("d");
+        delay(40);
+        s=s+1;
+   
+   loop();
+        if(s==5)
+       {
+        s=0;
+        c=0;
+        delay(1000);
+      break;
+       }
+       
+  }
+  }
+ 
+  }
