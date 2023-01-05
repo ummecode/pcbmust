@@ -153,10 +153,8 @@ Firebase.setString(firebasedata,"/LCD/RELAY","ON");
   lcd.print("RELAYOFF");
 Firebase.setString(firebasedata,"/LCD/RELAY","OFF");
      M1();
-    //delay(100);
-   // M1();
     
- }
+   }
 
  
   if(digitalRead(Pump)==1 && j==0)
