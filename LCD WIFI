@@ -154,7 +154,7 @@ Firebase.setString(firebasedata,"/LCD/RELAY","ON");
 Firebase.setString(firebasedata,"/LCD/RELAY","OFF");
      M1();
     
-   }
+ }
 
  
   if(digitalRead(Pump)==1 && j==0)
@@ -625,25 +625,9 @@ M2();
    Serial.print("AUTOMATIC MODE RELAY:");
   Serial.println(Auto_mode); 
     if(Auto_mode=="1"){
-        j=3;                             //automatic mode
-      if(ITS1>=i && ITS1<=k) {
-    digitalWrite(Relay,HIGH);
-    Serial.println("RELAY ON");
-    lcd.clear();
- lcd.print("RELAY ON");
- lcd.noBlink();
- Firebase.setString(firebasedata,"/LCD/RELAY","ON");
+        j=0;                             //automatic mode
+     
   }
-  else{
-    digitalWrite(Relay,LOW);
-    Serial.println("RELAY OFF");
-   lcd.clear();
-  lcd.print("RELAYOFF");
-  lcd.noBlink();
- Firebase.setString(firebasedata,"/LCD/RELAY","OFF");
-  }
-
-    }
     Firebase.setString(firebasedata,"/LCD/AUTOMATIC MODE RELAY","0");
   }
   
@@ -653,26 +637,8 @@ M2();
    Serial.print("AUTOMATIC MODE PUMP:");
   Serial.println(Auto_mode_p); 
     if(Auto_mode_p=="1"){ 
-      j=4;
-       if(ITS2>=i && ITS2<=k) {
-    digitalWrite(Pump,HIGH);
-    Serial.println("PUMP ON");
- lcd.clear();
- lcd.print("PUMP ON");
- lcd.noBlink();
- 
- Firebase.setString(firebasedata,"/LCD/PUMP","ON");
-  }
-  else{
-    digitalWrite(Pump,LOW);
-     Serial.println("PUMP OFF");
- lcd.clear();
- lcd.print("PUMP OFF");
- lcd.noBlink();
- Firebase.setString(firebasedata,"/LCD/PUMP","OFF");
-  }
-
- }
+      j=0;
+    }
  Firebase.setString(firebasedata,"/LCD/AUTOMATIC MODE PUMP","0");
   }
   
@@ -743,6 +709,10 @@ Firebase.setString(firebasedata,"/LCD/PUMP","OFF");
   }
 }
   
+  
+ 
+  
+      
   
  
   
