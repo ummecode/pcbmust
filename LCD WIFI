@@ -30,7 +30,7 @@ int m=0;
 int k=118;
 int l=(5*(i-32))/9;
 int n=(5*(k-32))/9;
-
+int a,d,c;
 
 
 unsigned long timediff;
@@ -57,6 +57,8 @@ void setup() {
   digitalWrite(rw,LOW);
   pinMode(Relay, OUTPUT);
   pinMode(Pump, OUTPUT);
+  pinMode(button1,INPUT);
+  pinMode(button2,INPUT);
   
 WiFi.begin(ssid, password);
    Serial.print("Connecting to Wifi..");
@@ -83,7 +85,7 @@ lcd.begin(8,1);
 
 void loop() {
   
- if((j==0 && m==0 )||(j==0&&m==2)){
+ if((j==0 && m==0  )||(j==0&&m==2  )){
     
      val1=analogRead(analogPin1);
  V1=val1*3.3/(4095*MF);
@@ -101,7 +103,7 @@ void loop() {
   Serial.println( "F");
    Serial.println();
    
-  if((j==0 && m==0 )||(j==0&&m==2)){
+  if((j==0 && m==0 )||(j==0&&m==2  )){
    lcd.clear();
   lcd.print("T1:");
   lcd.print(ITS1);
@@ -132,7 +134,7 @@ M1();
   Serial.print( ITS2);
    Serial.println( "F");
   
-   if((j==0 && m==0 )||(j==0&&m==2)){
+   if((j==0 && m==0)||(j==0&&m==2 )){
    lcd.clear();
   lcd.print("T2:");
   lcd.print(ITS2);
@@ -149,7 +151,7 @@ M1();
     
   }
      
-  if((digitalRead(Relay)==1&& j==0&&m==0)||(digitalRead(Relay)==1&& j==0&&m==2) )
+  if((digitalRead(Relay)==1&& j==0&&m==0)||(digitalRead(Relay)==1&& j==0&&m==2 ) )
   {
     Serial.println("RELAY ON");
     lcd.clear();
@@ -161,7 +163,7 @@ Firebase.setString(firebasedata,"/LCD/RELAY","ON");
    }
     
 
- if((digitalRead(Relay)==0 && j==0&&m==0 )||(digitalRead(Relay)==0&& j==0&&m==2) )
+ if((digitalRead(Relay)==0 && j==0&&m==0 )||(digitalRead(Relay)==0&& j==0&&m==2  ) )
  {
   Serial.println("RELAY OFF");
    lcd.clear();
@@ -171,7 +173,7 @@ Firebase.setString(firebasedata,"/LCD/RELAY","OFF");
  }
 
  
-  if((digitalRead(Pump)==1 && j==0&&m==0 )||(digitalRead(Pump)==1&& j==0&&m==2) )
+  if((digitalRead(Pump)==1 && j==0&&m==0 )||(digitalRead(Pump)==1&& j==0&&m==2 ) )
   {
     Serial.println("PUMP ON");
  lcd.clear();
@@ -181,7 +183,7 @@ Firebase.setString(firebasedata,"/LCD/RELAY","OFF");
 }
   
  
- if((digitalRead(Pump)==0 && j==0&&m==0)||(digitalRead(Pump)==0&& j==0&&m==2) )
+ if((digitalRead(Pump)==0 && j==0&&m==0)||(digitalRead(Pump)==0&& j==0&&m==2 ) )
  {
   Serial.println("PUMP OFF");
  lcd.clear();
@@ -196,7 +198,103 @@ if(j==0){
   Firebase.setInt(firebasedata,"/LCD/B2",k);
 }
   }
+   Serial.println(millis());
+  //delay(1000);
   
+if(digitalRead(button1)==0 && flag2==0)
+  {
+    buttonpushed=millis();
+    Serial.print("buttonpushed:");
+    Serial.println(buttonpushed);
+    flag2=1;
+    
+   }
+        
+        if(digitalRead(button1)==1&& flag2==1)
+        {
+          releasetime1=millis();
+          flag2=0;
+        Serial.print("releasetime1:");
+    Serial.println(releasetime1);
+    timediff1=releasetime1-buttonpushed;
+    Serial.print("timediff1:");
+    Serial.println(timediff1);
+    d=0;
+    m=6;
+        }
+        
+        if(timediff1>=1000 && a==0 &&d==0)
+    {
+      digitalWrite(Relay,HIGH);       
+       Serial.println("RELAY ON");
+       lcd.clear();
+ lcd.print("RELAY ON");
+ lcd.noBlink();
+Firebase.setString(firebasedata,"/LCD/RELAY","ON");
+a=1;
+timediff1=0;
+
+    }
+     if(timediff1>=1000 && a==1 &&d==0)
+    {
+      digitalWrite(Relay,LOW);       
+       Serial.println("RELAY OFF");
+       lcd.clear();
+ lcd.print("RELAYOFF");
+ lcd.noBlink();
+Firebase.setString(firebasedata,"/LCD/RELAY","OFF");
+a=0;
+timediff1=0;
+
+    }
+       
+   if(digitalRead(button2)==0 && flag1==0)
+        {
+          presstime=millis();
+          flag1=1;
+        Serial.print("presstime:");
+    Serial.println(presstime);
+    
+        }
+        
+        if(digitalRead(button2)==1&& flag1==1)
+        {
+          releasetime=millis();
+          flag1=0;
+         
+          Serial.print("releasetime:");
+    Serial.println(releasetime);
+    timediff=releasetime-presstime;
+    Serial.print("timediff:");
+    Serial.println(timediff);
+    d=1;
+    m=6;
+    }
+         if(timediff>=1000 && c==0 &&d==1)
+    {
+      digitalWrite(Pump,HIGH);       
+       Serial.println("PUMP ON");
+       lcd.clear();
+ lcd.print("PUMP ON");
+ lcd.noBlink();
+Firebase.setString(firebasedata,"/LCD/PUMP","ON");
+c=1;
+timediff=0;
+
+    }
+     if(timediff>=1000 && c==1 && d==1)
+    {
+      digitalWrite(Pump,LOW);       
+       Serial.println("PUMP OFF");
+       lcd.clear();
+ lcd.print("PUMP OFF");
+ lcd.noBlink();
+Firebase.setString(firebasedata,"/LCD/PUMP","OFF");
+c=0;
+timediff=0;
+
+    }
+ 
  if((j==0 && m==0 )||(j==0&&m==2)){
  if(Firebase.getString(firebasedata,"/LCD/b1"))  
   {        
@@ -264,7 +362,7 @@ if(j==0){
   }
   }
   
- if((m==0&&j==0)||(m==5&&j==0) ||(j==0&&m==2)||(m==3&&j==0)){
+ if((m==0&&j==0)||(m==5&&j==0) ||(j==0&&m==2)||(m==3&&j==0)||(m==6&&j==0)){
      if(Firebase.getString(firebasedata,"/LCD/r"))
   {        
      
@@ -274,6 +372,8 @@ if(j==0){
   
    if(r=="1"){
     m=1;
+    a=0;
+    c=0;
     lcd.clear();
      lcd.print(" RELAY ");
      Firebase.setString(firebasedata,"/LCD/r","0");
@@ -281,7 +381,7 @@ if(j==0){
   }
  }
   
-   if((m==0&&j==0)||(m==3&&j==0)||(j==0&&m==2)||(m==5&&j==0)){
+   if((m==0&&j==0)||(m==3&&j==0)||(j==0&&m==2)||(m==5&&j==0)||(m==6&&j==0)){
    if(Firebase.getString(firebasedata,"/LCD/p")) 
   {        
      
@@ -291,6 +391,8 @@ if(j==0){
   
    if(p=="1"){
     m=4;
+    a=0;
+    c=0;
     lcd.clear();
      lcd.print("  PUMP ");
      Firebase.setString(firebasedata,"/LCD/p","0");
@@ -677,7 +779,7 @@ void M1(){
   }
    }
   
-   if((m==0&&j==0)||(m==5&&j==0) ||(j==0&&m==2)||(m==3&&j==0)){
+   if((m==0&&j==0)||(m==5&&j==0) ||(j==0&&m==2)||(m==3&&j==0)||(m==6&&j==0)){
     if(Firebase.getString(firebasedata,"/LCD/r"))  
   {        
      
@@ -687,13 +789,15 @@ void M1(){
   
    if(r=="1"){
     m=1;
+    a=0;
+    c=0;
       lcd.clear();
      lcd.print(" RELAY ");
      Firebase.setString(firebasedata,"/LCD/r","0");
    }
   }
    }
-  if((m==0&&j==0)||(m==3&&j==0)||(j==0&&m==2)||(m==5&&j==0)){
+  if((m==0&&j==0)||(m==3&&j==0)||(j==0&&m==2)||(m==5&&j==0)||(m==6&&j==0)){
    if(Firebase.getString(firebasedata,"/LCD/p"))  
   {        
      
@@ -705,12 +809,58 @@ void M1(){
       lcd.clear();
      lcd.print("  PUMP ");
     m=4;
+    a=0;
+    c=0;
      Firebase.setString(firebasedata,"/LCD/p","0");
    }
     
    }
     }
+    if(digitalRead(button1)==0 && flag2==0)
+  {
+    buttonpushed=millis();
+    Serial.print("buttonpushed:");
+    Serial.println(buttonpushed);
+    flag2=1;
     
+   }
+        
+        if(digitalRead(button1)==1&& flag2==1)
+        {
+          releasetime1=millis();
+          flag2=0;
+        Serial.print("releasetime1:");
+    Serial.println(releasetime1);
+    timediff1=releasetime1-buttonpushed;
+    Serial.print("timediff1:");
+    Serial.println(timediff1);
+    d=0;
+    m=6;
+        }
+        
+          if(digitalRead(button2)==0 && flag1==0)
+        {
+          presstime=millis();
+          flag1=1;
+        Serial.print("presstime:");
+    Serial.println(presstime);
+    
+        }
+        
+        if(digitalRead(button2)==1&& flag1==1)
+        {
+          releasetime=millis();
+          flag1=0;
+         
+          Serial.print("releasetime:");
+    Serial.println(releasetime);
+    timediff=releasetime-presstime;
+    Serial.print("timediff:");
+    Serial.println(timediff);
+    d=1;
+    m=6;
+        }
+
     
 M2();
   }
