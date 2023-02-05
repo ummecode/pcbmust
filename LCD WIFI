@@ -881,6 +881,8 @@ M2();
      m=2;
   }
     Firebase.setString(firebasedata,"/LCD/AUTOMATIC MODE RELAY","0");
+     Firebase.setString(firebasedata,"/LCD/r","0");
+     Firebase.setString(firebasedata,"/LCD/p","0");
   }
     }
     if((m==1&&j==0)||(m==2&&j==0)){
