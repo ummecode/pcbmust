@@ -898,6 +898,8 @@ m=3;
      
   }
     Firebase.setString(firebasedata,"/LCD/manual relay","0");
+     Firebase.setString(firebasedata,"/LCD/ON R","0");
+     Firebase.setString(firebasedata,"/LCD/OFF R","0");
   }
     }
   
@@ -948,6 +950,8 @@ m=5;                            //automatic mode
      
   }
     Firebase.setString(firebasedata,"/LCD/manual pump","0");
+     Firebase.setString(firebasedata,"/LCD/ON P","0");
+     Firebase.setString(firebasedata,"/LCD/OFF P","0");
   }
     }
     
