@@ -193,10 +193,10 @@ Firebase.setString(firebasedata,"/LCD/RELAY","OFF");
 }
  
  
-if(j==0){
-  Firebase.setInt(firebasedata,"/LCD/B1",i);
-  Firebase.setInt(firebasedata,"/LCD/B2",k);
-}
+//if(j==0){
+  //Firebase.setInt(firebasedata,"/LCD/B1",i);
+  //Firebase.setInt(firebasedata,"/LCD/B2",k);
+//}
   }
    Serial.println(millis());
   //delay(1000);
