@@ -692,6 +692,8 @@ if(cursor6=="1" && j==2 ){                              //cursor6
      delay(1000);
      lcd.clear();
      Firebase.setString(firebasedata,"/LCD/SAVE","0");
+      Firebase.setString(firebasedata,"/LCD/b2","0");
+      Firebase.setString(firebasedata,"/LCD/b1","0");
      j=0;
      m=0;
     Firebase.setInt(firebasedata,"/LCD/B2",k);
