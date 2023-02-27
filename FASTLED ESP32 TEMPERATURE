@@ -1,0 +1,1922 @@
+#include <WiFi.h>
+#include "FastLED.h"
+#define ssid "Zohra"
+#define password  "air998877"
+WiFiServer server(80);
+#define LED_PIN1    4
+#define LED_PIN2     16
+const int ITS=32;
+const int OTS=12;
+const int led1=13;
+const int led2=17;
+const int led3=21;
+const int Analog_pin=14;
+#define NUM_LEDS_PER_STRIP  5
+#define NUM_STRIPS 2
+#define LED_TYPE    WS2812
+#define COLOR_ORDER GRB
+CRGB leds1[NUM_LEDS_PER_STRIP ];
+CRGB leds2[NUM_LEDS_PER_STRIP ];
+CRGB count[10];
+#define BRIGHTNESS  64
+int val1,val2,val3;
+float V1,V2,V3;
+
+int c,s,p,b=0;
+int i,Count;
+int R,G,B;
+String dataIn = "";
+uint8_t colorIndex[NUM_LEDS_PER_STRIP ];
+int wait30 = 30000;
+String req;
+DEFINE_GRADIENT_PALETTE( greenblue_gp ) { 
+  0,   0,  255, 245,
+  46,  0,  21,  255,
+  179, 12, 250, 0,
+  255, 0,  255, 245
+};
+
+CRGBPalette16 greenblue = greenblue_gp;
+
+DEFINE_GRADIENT_PALETTE( browngreen_gp ) { 
+    0,    6,  255,    0,     //green
+   71,    0,  255,  153,     //bluegreen
+  122,  200,  200,  200,     //gray
+  181,  110,   61,    6,     //brown
+  255,    6,  255,    0      //green
+};
+CRGBPalette16 orangePink = browngreen_gp;
+uint8_t hue = 0;
+uint8_t patternCounter = 0;
+CRGB source1[NUM_LEDS_PER_STRIP];
+CRGB source2[NUM_LEDS_PER_STRIP];
+
+
+uint8_t blendAmount = 0;
+uint8_t source1Pattern = 0;
+uint8_t source2Pattern = 1;
+bool useSource1 = false;
+
+CRGBPalette16  lavaPalette = CRGBPalette16(
+  CRGB::DarkRed,  CRGB::Maroon,   CRGB::DarkRed,  CRGB::Maroon,
+  CRGB::DarkRed,  CRGB::Maroon,   CRGB::DarkRed,  CRGB::DarkRed,
+  CRGB::DarkRed,  CRGB::DarkRed,  CRGB::Red,      CRGB::Orange,
+  CRGB::White,    CRGB::Orange,   CRGB::Red,      CRGB::DarkRed
+);
+
+uint16_t brightnessScale = 150;
+uint16_t indexScale = 100;
+CRGBPalette16 firePalette = HeatColors_p;
+CRGB background[NUM_LEDS_PER_STRIP];
+uint8_t   noiseData[NUM_LEDS_PER_STRIP];
+
+CRGBPalette16 party = PartyColors_p;
+
+uint8_t   octaveVal   = 2;
+uint16_t  xVal        = 0;
+int       scaleVal    = 50;
+uint16_t  timeVal     = 0;
+uint16_t  x;
+int       scale;
+uint16_t  t;
+uint8_t tempIndex = 0;
+uint8_t paletteIndex = 0;
+
+CRGBPalette16 purplePalette = CRGBPalette16 (
+    CRGB::DarkViolet,
+    CRGB::DarkViolet,
+    CRGB::DarkViolet,
+    CRGB::DarkViolet,
+    
+    CRGB::Magenta,
+    CRGB::Magenta,
+    CRGB::Linen,
+    CRGB::Linen,
+    
+    CRGB::Magenta,
+    CRGB::Magenta,
+    CRGB::DarkViolet,
+    CRGB::DarkViolet,
+
+    CRGB::DarkViolet,
+    CRGB::DarkViolet,
+    CRGB::Linen,
+    CRGB::Linen
+);
+CRGBPalette16 myPal = purplePalette;
+DEFINE_GRADIENT_PALETTE (heatmap_gp) {
+    0,   0,   0,   0,   //black
+  128, 255,   0,   0,   //red
+  200, 255, 255,   0,   //bright yellow
+  255, 255, 255, 255    //full white 
+};
+
+CRGBPalette16 myPal1 = heatmap_gp;
+
+uint8_t whichPalette = 0;
+
+DEFINE_GRADIENT_PALETTE( greenblue_gp1 ) { 
+    0,    0,  194,  255,     //light blue
+   46,    3,    0,  246,     //dark blue
+  176,   55,  222,   70,     //bright green
+  255,    0,  194,  255      //light blue
+};
+
+DEFINE_GRADIENT_PALETTE( orangepink_gp ) { 
+    0,  255,  100,    0,     //orange
+   90,  255,    0,  255,     //magenta
+  150,  255,  100,    0,     //orange
+  255,  255,  100,    0      //orange
+};
+
+CRGBPalette16 currentPalette(greenblue_gp1);
+CRGBPalette16 targetPalette(orangepink_gp);
+DEFINE_GRADIENT_PALETTE( Sunset_Real_gp ) {
+    0, 120,  0,  0,
+   22, 179, 22,  0,
+   51, 255,104,  0,
+   85, 167, 22, 18,
+  135, 100,  0,103,
+  198,  16,  0,130,
+  255,   0,  0,160};
+
+
+CRGBPalette16 myPal2 = Sunset_Real_gp;
+
+void setup() {
+  Serial.begin(38400);
+   Serial2.begin(38400); 
+   pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+   pinMode(led3, OUTPUT);
+ FastLED.addLeds<LED_TYPE, LED_PIN1, COLOR_ORDER>(leds1, NUM_LEDS_PER_STRIP);
+ FastLED.addLeds<LED_TYPE, LED_PIN2, COLOR_ORDER>(leds2,NUM_LEDS_PER_STRIP);
+FastLED.setBrightness(  BRIGHTNESS );
+FastLED.setCorrection(TypicalPixelString);
+    FastLED.clear();
+    FastLED.show();
+     for (int i = 0; i < 5; i++) {
+    colorIndex[i] = random8();
+    }
+     
+      WiFi.begin(ssid, password);
+   Serial.print("Connecting to Wifi..");
+   
+   while (WiFi.status() != WL_CONNECTED) {
+        Serial.print('.');
+        delay(1000);
+    }
+   Serial.println("connected");
+   Serial.println(WiFi.localIP());
+   delay(1000);
+  server.begin();
+ 
+}
+
+void loop() {
+
+   WiFiClient client = server.available();
+
+    if (client) { 
+   req = client.readStringUntil('\r');
+    }
+    Serial.println(req);
+    val3=analogRead(Analog_pin);
+V3=val3*3.3/4095;
+Serial.print("V3: ");
+Serial.println(V3);
+
+    val1=analogRead(ITS);
+V1=val1*3.3/4095;
+Serial.print("V1: ");
+Serial.println(V1);
+
+ val2=analogRead(OTS);
+V2=val2*3.3/4095;
+Serial.print("V2: ");
+Serial.println(V2);
+
+     if (req.indexOf("/START") != -1) {
+      b=1;
+      FastLED.clear();
+      FastLED.show();
+     }
+     if (req.indexOf("/STOP") != -1) {
+      b=0;
+       digitalWrite(led1,LOW);
+     digitalWrite(led2,LOW);
+      digitalWrite(led3,LOW);
+      s=33;
+     p=33;
+     }
+ if((V1<=0.85 )|| (V2<=0.85) ||b==0 || V3<1.5 ||V3>2.5 )
+  {
+    digitalWrite(led1,LOW);
+     digitalWrite(led2,LOW);
+      digitalWrite(led3,LOW);
+      b=0;
+     s=33;
+     p=33;
+FastLED.clear();
+      FastLED.show();
+ }
+ else if(V1>0.85&& V2>0.85&&b==1&& (V3>=1.5 && V3<=2.5))
+ {
+   digitalWrite(led1,HIGH);
+     digitalWrite(led2,HIGH);
+     digitalWrite(led3,HIGH);
+  if (req.indexOf("/led_strip/1") != -1) {
+      Serial.println("led strip1");
+       c=0;
+       
+  M1();
+   M2();
+    
+  }
+    else if (req.indexOf("/led_strip/2") != -1) {
+     
+      Serial.println("led strip2");
+      c=1;
+  
+  M1();
+   M2();
+   
+    }
+
+  if(c==0){
+   
+    if (req.indexOf("/d") != -1) {
+      delay(10);
+     R = req.substring(7, 10).toInt();
+      Serial.print(R);
+      Serial.print(",");
+      G = req.substring(10, 13).toInt();
+      Serial.print(G);
+      Serial.print(",");
+       B = req.substring(13, 16).toInt();
+     Serial.println(B);
+    
+    
+     for (i = 0; i <= 4; i++) {
+    leds1[i] = CRGB( R, G,B);
+    s=0;
+    M2();
+    }
+  FastLED.show();
+  delay(20);
+}
+  if (req.indexOf("/e") != -1){
+    Serial.println("adding waves");
+    addingwaves();
+    s=1;
+    M2();
+  }
+
+   if (req.indexOf("/f") != -1){
+    Serial.println("blur");
+    blur();
+    s=2;
+    M2();
+  }
+  if(req.indexOf("/3")!= -1){
+    blurphaseBeat();
+    s=3;
+    M2();
+  }
+  if(req.indexOf("/4")!= -1){
+    brightnessWave();
+    s=4;
+    M2();
+  }
+   if(req.indexOf("/5")!= -1){
+    gradientBeat();
+    s=5;
+    M2();
+  }
+   if(req.indexOf("/6")!= -1){
+    movingDot();
+    s=6;
+    M2();
+  }
+   if(req.indexOf("/7")!= -1){
+    phaseBeat();
+    s=7;
+    M2();
+  }
+   if(req.indexOf("/8")!= -1){
+    rainbowBeat();
+    s=8;
+    M2();
+     }
+  if(req.indexOf("/9")!= -1){
+    sawTooth();
+    s=9;
+    M2();
+  }
+   if(req.indexOf("/:")!= -1){
+    movingDots();
+    s=10;
+    M2();
+  }
+  if(req.indexOf("/;")!= -1){
+    redWhiteBlue();
+    s=11;
+    M2();
+  }
+  if(req.indexOf("/a")!= -1){
+   functionsTimer();
+   s=12;
+   M2();
+  }
+  if(req.indexOf("/=")!= -1){
+  crossfadeTimer();
+  s=13;
+  M2();
+}
+ if(req.indexOf("/b")!= -1){
+  lava();
+  s=14;
+  M2();
+}
+if(req.indexOf("/c")!= -1){
+  fire();
+  s=15;
+  M2();
+}
+if(req.indexOf("/@")!= -1){
+ movingPixel();
+ s=16;
+ M2();
+}
+if(req.indexOf("/A")!= -1){
+ prettyFill();
+ s=17;
+ M2();
+}
+if(req.indexOf("/B")!= -1){
+fill_raw_noise8();
+s=18;
+M2();
+}
+if(req.indexOf("/C")!= -1){
+inoise8();
+s=19;
+M2();
+}
+if(req.indexOf("/D")!= -1){
+inoise8_demo();
+s=20;
+M2();
+}
+if(req.indexOf("/E")!= -1){
+rgb();
+s=21;
+M2();
+}
+if(req.indexOf("/F")!= -1){
+colorCorr();
+s=22;
+M2();
+}
+if(req.indexOf("/G")!= -1){
+colorTemp();
+s=23;
+M2();
+}
+if(req.indexOf("/H")!= -1){
+hsvRainbow();
+s=24;
+M2();
+}
+if(req.indexOf("/I")!= -1){
+icy();
+s=25;
+M2();
+}
+if(req.indexOf("/J")!= -1){
+ColorPalette16();
+s=26;
+M2();
+}
+if(req.indexOf("/K")!= -1){
+blueGradientPal();
+s=27;
+M2();
+}
+if(req.indexOf("/L")!= -1){
+fadeToBlackBy();
+s=28;
+M2();
+}
+if(req.indexOf("/M")!= -1){
+heatMap();
+s=29;
+M2();
+}
+if(req.indexOf("/N")!= -1){
+ paletteBlending();
+ s=30;
+ M2();
+}
+if(req.indexOf("/O")!= -1){
+paletteKnife();
+s=31;
+M2();
+}
+}
+if(c==1){
+  
+    if (req.indexOf("/d") != -1) {
+      delay(10);
+     R = req.substring(7, 10).toInt();
+      Serial.print(R);
+      Serial.print(",");
+      G = req.substring(10, 13).toInt();
+      Serial.print(G);
+      Serial.print(",");
+       B = req.substring(13, 16).toInt();
+     Serial.println(B);
+    
+    
+     for (i = 0; i <= 4; i++) {
+    leds2[i] = CRGB( R, G,B);
+    p=0;
+    M1();
+    }
+  FastLED.show();
+  delay(20);
+}
+  if (req.indexOf("/e")!= -1){
+    addingwaves1();
+    p=1;
+    M1();
+  }
+   if (req.indexOf("/f")!= -1){
+    blur1();
+    p=2;
+     M1();
+  }
+  if(req.indexOf("/3")!= -1){
+    blurphaseBeat1();
+    p=3;
+     M1();
+  }
+  if(req.indexOf("/4")!= -1){
+    brightnessWave1();
+    p=4;
+     M1();
+  }
+   if(req.indexOf("/5")!= -1){
+    gradientBeat1();
+    p=5;
+     M1();
+  }
+   if(req.indexOf("/6")!= -1){
+    movingDot1();
+    p=6;
+     M1();
+  }
+   if(req.indexOf("/7")!= -1){
+    phaseBeat1();
+    p=7;
+     M1();
+  }
+   if(req.indexOf("/8")!= -1){
+    rainbowBeat1();
+    p=8;
+     M1();
+  }
+  if(req.indexOf("/9")!= -1){
+    sawTooth1();
+    p=9;
+     M1();
+  }
+   if(req.indexOf("/:")!= -1){
+    movingDots1();
+    p=10;
+     M1();
+  }
+  if(req.indexOf("/;")!= -1){
+    redWhiteBlue1();
+    p=11;
+     M1();
+  }
+  if(req.indexOf("/a")!= -1){
+   functionsTimer1();
+   p=12;
+    M1();
+  }
+  if(req.indexOf("/=")!= -1){
+  crossfadeTimer1();
+  p=13;
+   M1();
+}
+ if(req.indexOf("/b")!= -1){
+  lava1();
+  p=14;
+   M1();
+}
+if(req.indexOf("/c")!= -1){
+  fire1();
+  p=15;
+   M1();
+}
+if(req.indexOf("/@")!= -1){
+ movingPixel1();
+ p=16;
+  M1();
+}
+if(req.indexOf("/A")!= -1){
+ prettyFill1();
+ p=17;
+  M1();
+}
+if(req.indexOf("/B")!= -1){
+fill_raw_noise81();
+p=18;
+ M1();
+}
+if(req.indexOf("/C")!= -1){
+inoise81();
+p=19;
+ M1();
+}
+if(req.indexOf("/D")!= -1){
+inoise8_demo1();
+p=20;
+ M1();
+}
+if(req.indexOf("/E")!= -1){
+rgb1();
+p=21;
+ M1();
+}
+if(req.indexOf("/F")!= -1){
+colorCorr1();
+p=22;
+ M1();
+}
+if(req.indexOf("/G")!= -1){
+colorTemp1();
+p=23;
+ M1();
+}
+if(req.indexOf("/H")!= -1){
+hsvRainbow1();
+p=24;
+ M1();
+}
+if(req.indexOf("/I")!= -1){
+icy1();
+p=25;
+ M1();
+}
+if(req.indexOf("/J")!= -1){
+ColorPalette161();
+p=26;
+ M1();
+}
+if(req.indexOf("/K")!= -1){
+blueGradientPal1();
+p=27;
+ M1();
+}
+if(req.indexOf("/L")!= -1){
+fadeToBlackBy1();
+p=28;
+ M1();
+}
+if(req.indexOf("/M")!= -1){
+heatMap1();
+p=29;
+ M1();
+}
+if(req.indexOf("/N")!= -1){
+ paletteBlending1();
+ p=30;
+  M1();
+}
+if(req.indexOf("/O")!= -1){
+paletteKnife1();
+p=31;
+ M1();
+}
+}
+ }
+client.println("HTTP/1.1 200 OK");
+  client.println("Content-Type: text/html");
+  client.println(""); //  Comillas importantes.
+  client.flush();
+  client.stop();
+}
+
+
+void addingwaves(){
+  
+uint8_t posBeat  = beatsin8(30, 0, NUM_LEDS_PER_STRIP  - 1, 0, 0);
+  uint8_t posBeat2 = beatsin8(60, 0, NUM_LEDS_PER_STRIP  - 1, 0, 0);
+  uint8_t posBeat3 = beatsin16(30, 0,NUM_LEDS_PER_STRIP  - 1, 0, 127);
+  uint8_t posBeat4 = beatsin16(60, 0, NUM_LEDS_PER_STRIP  - 1, 0, 127);
+uint8_t colBeat  = beatsin8(45, 0, 255, 0, 0);
+
+  leds1[(posBeat + posBeat2) / 2]  = CHSV(colBeat, 255, 255);
+  leds1[(posBeat3 + posBeat4) / 2]  = CHSV(colBeat, 255, 255);
+
+  fadeToBlackBy(leds1, NUM_LEDS_PER_STRIP , 10);
+
+
+  FastLED.show();
+}
+
+void blur(){
+EVERY_N_SECONDS(2) {
+    for (int i = 0; i < 4; i++) {
+      blur1d(leds1, NUM_LEDS_PER_STRIP , 150);
+      
+    }
+  }
+
+  EVERY_N_SECONDS(4) {
+    fill_solid(leds1, NUM_LEDS_PER_STRIP , CRGB::Red);
+  fill_solid(leds1, (NUM_LEDS_PER_STRIP / 3) * 2, CRGB::Green);
+  fill_solid(leds1, (NUM_LEDS_PER_STRIP  / 3), CRGB::Blue);
+ 
+  }
+FastLED.show();
+}
+
+void blurphaseBeat(){
+  
+ uint8_t sinBeat   = beatsin8(30, 0, NUM_LEDS_PER_STRIP  - 1, 0, 0);
+  uint8_t sinBeat2  = beatsin8(30, 0, NUM_LEDS_PER_STRIP  - 1, 0, 85);
+  uint8_t sinBeat3  = beatsin8(30, 0, NUM_LEDS_PER_STRIP  - 1, 0, 170);
+
+  
+  leds1[sinBeat]   = CRGB::Green;
+  leds1[sinBeat2]  = CRGB::Blue;
+  leds1[sinBeat3]  = CRGB::Red;
+   
+  EVERY_N_MILLISECONDS(1){
+    for(int i = 0; i < 4; i++) {
+      blur1d(leds1, NUM_LEDS_PER_STRIP , 50);
+      
+    }
+  }
+   FastLED.show();
+}
+
+void brightnessWave(){
+   //Creat a sin wave with period of 2 seconds (30bpm) to change the brightness of the strip
+  uint8_t sinBeat = beatsin8(30, 50, 255, 0, 0);
+  
+  // Color each pixel from the palette using the index from colorIndex[]
+  for (int i = 0; i < NUM_LEDS_PER_STRIP ; i++) {
+    leds1[i] = ColorFromPalette(greenblue, colorIndex[i], sinBeat);
+     
+    }
+  
+  EVERY_N_MILLISECONDS(5){
+    for (int i = 0; i <NUM_LEDS_PER_STRIP ; i++) {
+      colorIndex[i]++;
+    }
+  }
+  FastLED.show();
+}
+
+void gradientBeat(){
+uint16_t beatA = beatsin16(30, 0, 255);
+    uint16_t beatB = beatsin16(20, 0, 255);
+    fill_palette(leds1, NUM_LEDS_PER_STRIP, (beatA + beatB) / 2, 10, orangePink, 255, LINEARBLEND);
+    
+    FastLED.show();
+  
+}
+void movingDot(){
+uint16_t sinBeat = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+
+  leds1[sinBeat] = CRGB::Blue;
+  
+  
+  fadeToBlackBy(leds1, NUM_LEDS_PER_STRIP, 10);
+  
+  EVERY_N_MILLISECONDS(10){
+    Serial.println(sinBeat);
+  }
+
+  FastLED.show();
+}
+
+void phaseBeat(){
+uint8_t sinBeat   = beatsin8(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+  uint8_t sinBeat2  = beatsin8(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 85);
+  uint8_t sinBeat3  = beatsin8(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 170);
+
+  
+  leds1[sinBeat]   = CRGB::Blue;
+  leds1[sinBeat2]  = CRGB::Red;
+  leds1[sinBeat3]  = CRGB::White;
+  
+  fadeToBlackBy(leds1,  NUM_LEDS_PER_STRIP, 10);
+  
+  EVERY_N_MILLISECONDS(10){
+    Serial.print(sinBeat);
+    Serial.print(",");
+    Serial.print(sinBeat2);
+    Serial.print(",");
+    Serial.println(sinBeat3);
+  }
+
+  FastLED.show();
+}
+
+void rainbowBeat(){
+  uint16_t beatA = beatsin16(30, 0, 255);
+    uint16_t beatB = beatsin16(20, 0, 255);
+    fill_rainbow(leds1,  NUM_LEDS_PER_STRIP, (beatA+beatB)/2, 8);
+    
+     FastLED.show();
+}
+
+void sawTooth(){
+uint8_t pos = map(beat16(40, 0), 0, 65535, 0, NUM_LEDS_PER_STRIP );
+  leds1[pos] = CHSV( hue, 200, 255);
+ 
+  fadeToBlackBy(leds1,NUM_LEDS_PER_STRIP, 3);
+ 
+
+  EVERY_N_MILLISECONDS( 10 ) {
+    hue++;
+  }
+
+  EVERY_N_MILLISECONDS(10) {
+    Serial.println(pos);
+  }
+   FastLED.show();
+}
+
+void functionsTimer(){
+  
+ switch (patternCounter) {
+    case 0:
+      movingDots();
+      break;
+    case 1:
+      rainbowBeat();
+      break;
+    case 2:
+      redWhiteBlue();
+      break;
+  }
+
+  EVERY_N_SECONDS(5) {
+    nextPattern();
+  }
+  FastLED.show();
+}
+
+void nextPattern() {
+  patternCounter = (patternCounter + 1) % 3;          // Change the number after the % to the number of patterns you have
+}
+
+void redWhiteBlue() {
+
+uint16_t sinBeat   = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+  uint16_t sinBeat2  = beatsin16(30, 0,NUM_LEDS_PER_STRIP- 1, 0, 21845);
+  uint16_t sinBeat3  = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 43690);
+
+  leds1[sinBeat]   = CRGB::Blue;
+  leds1[sinBeat2]  = CRGB::Red;
+  leds1[sinBeat3]  = CRGB::White;
+  
+  fadeToBlackBy(leds1,  NUM_LEDS_PER_STRIP, 10);
+  
+  FastLED.show();
+}
+
+void movingDots() {
+  
+  uint16_t posBeat  = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+  uint16_t posBeat2 = beatsin16(60, 0,  NUM_LEDS_PER_STRIP - 1, 0, 0);
+
+  uint16_t posBeat3 = beatsin16(30, 0,  NUM_LEDS_PER_STRIP - 1, 0, 32767);
+  uint16_t posBeat4 = beatsin16(60, 0,  NUM_LEDS_PER_STRIP - 1, 0, 32767);
+
+  // Wave for LED color
+  uint8_t colBeat  = beatsin8(45, 0, 255, 0, 0);
+
+  leds1[(posBeat + posBeat2) / 2]  = CHSV(colBeat, 255, 255);
+  leds1[(posBeat3 + posBeat4) / 2]  = CHSV(colBeat, 255, 255);
+  
+
+  fadeToBlackBy(leds1, NUM_LEDS_PER_STRIP, 10);
+   
+   FastLED.show();
+}
+
+void crossfadeTimer(){
+ EVERY_N_MILLISECONDS(10) {
+    blend(source1, source2, leds1, NUM_LEDS_PER_STRIP, blendAmount);   // Blend between the two sources
+
+    if (useSource1) {
+      if (blendAmount < 255) blendAmount++;                   // Blend 'up' to source 2
+    } else {
+      if (blendAmount > 0) blendAmount--;                     // Blend 'down' to source 1
+    }
+  }
+
+  EVERY_N_SECONDS(5) {
+    nextPattern1();
+  }
+
+  runPattern(source1Pattern, source1);                  // Run both patterns simultaneously
+  runPattern(source2Pattern, source2);
+  
+  FastLED.show();
+}
+void nextPattern1() {
+  patternCounter = (patternCounter + 1) % 3;          // Change the number after the % to the number of patterns you have
+
+  if (useSource1) source1Pattern = patternCounter;    // Determine which source array for new pattern
+  else source2Pattern = patternCounter;
+
+  useSource1 = !useSource1;                           // Swap source array for next time around
+}
+void runPattern(uint8_t pattern, CRGB *LEDArray) {
+  switch (pattern) {
+    case 0:
+      movingDots(LEDArray);
+      break;
+    case 1:
+      rainbowBeat(LEDArray);
+      break;
+    case 2:
+      redWhiteBlue(LEDArray);
+      break;
+  }
+}
+void movingDots(CRGB *LEDarray) {
+  
+  uint16_t posBeat  = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+  uint16_t posBeat2 = beatsin16(60, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+
+  uint16_t posBeat3 = beatsin16(30, 0, NUM_LEDS_PER_STRIP- 1, 0, 32767);
+  uint16_t posBeat4 = beatsin16(60, 0, NUM_LEDS_PER_STRIP - 1, 0, 32767);
+
+  // Wave for LED color
+  uint8_t colBeat  = beatsin8(45, 0, 255, 0, 0);
+
+  LEDarray[(posBeat + posBeat2) / 2]  = CHSV(colBeat, 255, 255);
+  LEDarray[(posBeat3 + posBeat4) / 2]  = CHSV(colBeat, 255, 255);
+
+  fadeToBlackBy(LEDarray, NUM_LEDS_PER_STRIP, 10);
+}
+
+
+void rainbowBeat(CRGB *LEDarray) {
+  
+  uint16_t beatA = beatsin16(30, 0, 255);
+  uint16_t beatB = beatsin16(20, 0, 255);
+  fill_rainbow(LEDarray, NUM_LEDS_PER_STRIP, (beatA+beatB)/2, 8);
+}
+
+
+void redWhiteBlue(CRGB *LEDarray) {
+
+  uint16_t sinBeat   = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+  uint16_t sinBeat2  = beatsin16(30, 0, NUM_LEDS_PER_STRIP- 1, 0, 21845);
+  uint16_t sinBeat3  = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 43690);
+
+  LEDarray[sinBeat]   = CRGB::Blue;
+  LEDarray[sinBeat2]  = CRGB::Red;
+  LEDarray[sinBeat3]  = CRGB::White;
+  
+  fadeToBlackBy(LEDarray,NUM_LEDS_PER_STRIP, 10);
+}
+void lava(){
+   for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+    uint8_t brightness = inoise8(i * brightnessScale, millis() / 5);
+    uint8_t index = inoise8(i * indexScale, millis() /10);
+    leds1[i] = ColorFromPalette(lavaPalette, index, brightness);
+    
+    }
+
+  FastLED.show();
+}
+void fire(){
+   EVERY_N_MILLISECONDS(5) {
+    runFire();
+  }
+                                                                
+  FastLED.show();
+}
+void runFire() {
+  int  a = millis();
+  
+  for (int i = 0; i <  NUM_LEDS_PER_STRIP; i++) {
+uint8_t noise = inoise8 (0 , i * 60 + a , a / 3);
+ uint8_t math = abs8(i - ( NUM_LEDS_PER_STRIP-1)) * 255 / ( NUM_LEDS_PER_STRIP-1);
+ uint8_t index = qsub8 (noise, math);
+
+leds1[i] = ColorFromPalette (firePalette, index, 255);  
+     
+  }  
+}
+void movingPixel(){
+  drawBackground();
+  drawMovingPixel();
+
+  EVERY_N_MILLISECONDS(20) {
+    fadeToBlackBy(leds1, NUM_LEDS_PER_STRIP, 10); 
+    nblend(leds1, background, NUM_LEDS_PER_STRIP, 30);
+    
+  } 
+  
+  FastLED.show();
+}
+void drawBackground() {
+  // A simple plasma effect
+  fill_noise16 (background, NUM_LEDS_PER_STRIP, 1, millis(), 30, 1, 0, 50, millis() / 3, 10);
+}
+
+void drawMovingPixel() {
+  // A pixel that moves back and forth using noise
+  uint16_t pos = inoise16(millis() * 100);
+  pos = constrain(pos, 13000, 51000);
+  pos = map(pos, 13000, 51000, 0, NUM_LEDS_PER_STRIP - 1);
+  leds1[pos] = CRGB::Red;
+  
+}
+void prettyFill(){
+   uint8_t octaves = 1;
+  uint16_t x = 0;
+  int scale = 100;
+  uint8_t hue_octaves = 1;
+  uint16_t hue_x = 1;
+  int hue_scale = 50;
+  uint16_t ntime = millis() / 3;
+  uint8_t hue_shift = 5;
+  
+  fill_noise16 (leds1,  NUM_LEDS_PER_STRIP, octaves, x, scale, hue_octaves, hue_x, hue_scale, ntime, hue_shift);
+  
+  FastLED.show();
+}
+
+void fill_raw_noise8(){
+
+timeVal = millis() / 4;
+
+  memset(noiseData, 0, NUM_LEDS_PER_STRIP);
+  fill_raw_noise8(noiseData, NUM_LEDS_PER_STRIP, octaveVal, xVal, scaleVal, timeVal);
+  
+  for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+      leds1[i] = ColorFromPalette(party, noiseData[i], noiseData[NUM_LEDS_PER_STRIP - i - 1]);
+       
+  }
+  
+  FastLED.show();
+}
+void inoise8(){
+uint16_t  x        = 0;
+  int       scale    = 10;
+  uint16_t  t        = 0;
+  
+  for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+      uint8_t hue = inoise8(i * scale + x, t);
+      leds1[i] = CHSV(hue, 255, 255);
+      
+  }
+  
+  FastLED.show();
+}
+void inoise8_demo(){
+ x = 0;
+  t = millis() / 5;
+  scale = beatsin8(10, 10, 30);
+  
+  for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+      uint8_t noise = inoise8(i * scale + x, t);
+      uint8_t hue = map(noise, 50, 190, 0, 255);
+      leds1[i] = CHSV(hue, 255, 255);
+      
+  }
+  
+  FastLED.show();
+}
+void rgb(){
+   for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+     leds1[i] = CRGB(i * 20, i * 10, i * 30);
+     
+  }
+  FastLED.show();
+}
+void colorCorr(){
+fill_solid(leds1, NUM_LEDS_PER_STRIP, CRGB::White);
+
+  
+  FastLED.setCorrection(UncorrectedColor);
+ FastLED.show();
+ M2();
+  delay(1000);
+  M2();
+   delay(1000);
+   M2();
+
+
+FastLED.setCorrection(TypicalLEDStrip);
+ FastLED.show();
+  M2();
+  delay(1000);
+  M2();
+   delay(1000);
+   M2();
+
+  FastLED.setCorrection(TypicalPixelString);
+  FastLED.show();
+  M2();
+  delay(1000);
+  M2();
+   delay(1000);
+   M2
+   ();
+
+}
+void colorTemp(){
+fill_solid(leds1, NUM_LEDS_PER_STRIP, CRGB::White);
+
+
+  EVERY_N_SECONDS(1) {
+    tempIndex++;
+    if (tempIndex > 8) tempIndex = 0;
+  }
+
+  switch (tempIndex) {
+    case 0:
+      FastLED.setTemperature(Candle);
+      break;
+    case 1:
+      FastLED.setTemperature(Tungsten40W);
+    break;
+    case 2:
+      FastLED.setTemperature(Tungsten100W);
+    break;
+    case 3:
+      FastLED.setTemperature(Halogen);
+    break;
+    case 4:
+      FastLED.setTemperature(CarbonArc);
+    break;
+    case 5:
+      FastLED.setTemperature(HighNoonSun);
+    break;
+    case 6:
+      FastLED.setTemperature(DirectSunlight);
+    break;
+    case 7:
+      FastLED.setTemperature(OvercastSky);
+    break;
+    case 8:
+      FastLED.setTemperature(ClearBlueSky);
+    break;
+  }
+
+  FastLED.show();
+}
+void hsvRainbow(){
+for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+    leds1[i] = CHSV(hue + (i * 10), 255, 255);
+    
+  }
+
+  EVERY_N_MILLISECONDS(15){
+    hue++;
+  }
+
+  FastLED.show();
+}
+void icy(){
+EVERY_N_MILLISECONDS(50) {
+    
+    leds1[0] = CHSV(160, random8(), random8(100, 255));
+    
+    for (int i = NUM_LEDS_PER_STRIP - 1; i > 0; i--) {
+      leds1[i] = leds1[i - 1];
+       
+    }
+  }
+   FastLED.show();
+}
+void ColorPalette16(){
+fill_palette(leds1, NUM_LEDS_PER_STRIP, paletteIndex, 255 / NUM_LEDS_PER_STRIP, purplePalette, 255, LINEARBLEND);
+
+ EVERY_N_MILLISECONDS(10){
+    paletteIndex++;
+  }
+  
+  FastLED.show();
+}
+void blueGradientPal(){
+for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+    leds1[i] = ColorFromPalette(greenblue, colorIndex[i]);
+    
+  }
+  
+  EVERY_N_MILLISECONDS(5){
+    for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+      colorIndex[i]++;
+    }
+  }
+  FastLED.show();
+}
+void fadeToBlackBy(){
+EVERY_N_MILLISECONDS(50){
+    
+    leds1[random8(0, NUM_LEDS_PER_STRIP )] = ColorFromPalette(myPal, random8(), 255, LINEARBLEND);
+     
+  }
+
+   fadeToBlackBy(leds1, NUM_LEDS_PER_STRIP, 1);
+  
+  FastLED.show();
+}
+void heatMap(){
+ fill_palette(leds1, NUM_LEDS_PER_STRIP, paletteIndex, 255 / NUM_LEDS_PER_STRIP, myPal1, 255, LINEARBLEND);
+ 
+  
+  EVERY_N_MILLISECONDS(10){
+    paletteIndex++;
+  }
+  FastLED.show();
+  }
+  
+  void paletteBlending(){
+  for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+    leds1[i] = ColorFromPalette(currentPalette, colorIndex[i]);
+    ;
+  }
+
+  nblendPaletteTowardPalette( currentPalette, targetPalette, 10 );
+
+  switch (whichPalette) {
+    case 0:
+      targetPalette = orangepink_gp;
+      break;
+    case 1:
+      targetPalette = browngreen_gp;
+      break;
+     case 2:
+      targetPalette = greenblue_gp;
+      break;
+  }
+
+  EVERY_N_SECONDS(5) {
+    whichPalette++;
+    if (whichPalette > 2) whichPalette = 0;
+    Serial.println(currentPalette[0]);
+  }
+  
+  EVERY_N_MILLISECONDS(5){
+    for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+      colorIndex[i]++;
+    }
+  }
+
+  FastLED.show();
+  }
+  
+ void paletteKnife(){
+   fill_palette(leds1, NUM_LEDS_PER_STRIP, paletteIndex, 255 / NUM_LEDS_PER_STRIP, myPal2, 255, LINEARBLEND);
+  
+  
+  EVERY_N_MILLISECONDS(10){
+    paletteIndex++;
+  }
+  
+  FastLED.show();
+  }
+  
+  void addingwaves1(){
+  
+uint8_t posBeat  = beatsin8(30, 0, NUM_LEDS_PER_STRIP  - 1, 0, 0);
+  uint8_t posBeat2 = beatsin8(60, 0, NUM_LEDS_PER_STRIP  - 1, 0, 0);
+  uint8_t posBeat3 = beatsin16(30, 0,NUM_LEDS_PER_STRIP  - 1, 0, 127);
+  uint8_t posBeat4 = beatsin16(60, 0, NUM_LEDS_PER_STRIP  - 1, 0, 127);
+uint8_t colBeat  = beatsin8(45, 0, 255, 0, 0);
+
+  
+leds2[(posBeat + posBeat2) / 2]  = CHSV(colBeat, 255, 255);
+  leds2[(posBeat3 + posBeat4) / 2]  = CHSV(colBeat, 255, 255);
+  
+fadeToBlackBy(leds2, NUM_LEDS_PER_STRIP , 10);
+
+  FastLED.show();
+}
+
+void blur1(){
+EVERY_N_SECONDS(2) {
+    for (int i = 0; i < 4; i++) {
+      
+      blur1d(leds2, NUM_LEDS_PER_STRIP , 150);
+    }
+  }
+
+  EVERY_N_SECONDS(4) {
+   
+  fill_solid(leds2, NUM_LEDS_PER_STRIP , CRGB::Red);
+  fill_solid(leds2, (NUM_LEDS_PER_STRIP / 3) * 2, CRGB::Green);
+  fill_solid(leds2, (NUM_LEDS_PER_STRIP  / 3), CRGB::Blue);
+  }
+FastLED.show();
+}
+
+void blurphaseBeat1(){
+  
+ uint8_t sinBeat   = beatsin8(30, 0, NUM_LEDS_PER_STRIP  - 1, 0, 0);
+  uint8_t sinBeat2  = beatsin8(30, 0, NUM_LEDS_PER_STRIP  - 1, 0, 85);
+  uint8_t sinBeat3  = beatsin8(30, 0, NUM_LEDS_PER_STRIP  - 1, 0, 170);
+
+  
+  
+   leds2[sinBeat]   = CRGB::Green;
+  leds2[sinBeat2]  = CRGB::Blue;
+  leds2[sinBeat3]  = CRGB::Red;
+
+  EVERY_N_MILLISECONDS(1){
+    for(int i = 0; i < 4; i++) {
+     
+      blur1d(leds2, NUM_LEDS_PER_STRIP , 50);
+    }
+  }
+   FastLED.show();
+}
+
+void brightnessWave1(){
+   //Creat a sin wave with period of 2 seconds (30bpm) to change the brightness of the strip
+  uint8_t sinBeat = beatsin8(30, 50, 255, 0, 0);
+  
+  // Color each pixel from the palette using the index from colorIndex[]
+  for (int i = 0; i < NUM_LEDS_PER_STRIP ; i++) {
+    
+    leds2[i] = ColorFromPalette(greenblue, colorIndex[i], sinBeat); 
+    }
+  
+  EVERY_N_MILLISECONDS(5){
+    for (int i = 0; i <NUM_LEDS_PER_STRIP ; i++) {
+      colorIndex[i]++;
+    }
+  }
+  FastLED.show();
+}
+
+void gradientBeat1(){
+uint16_t beatA = beatsin16(30, 0, 255);
+    uint16_t beatB = beatsin16(20, 0, 255);
+    
+     fill_palette(leds2, NUM_LEDS_PER_STRIP, (beatA + beatB) / 2, 10, orangePink, 255, LINEARBLEND);
+
+    FastLED.show();
+  
+}
+void movingDot1(){
+uint16_t sinBeat = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+
+ 
+  leds2[sinBeat] = CRGB::Blue;
+  
+  
+  fadeToBlackBy(leds2, NUM_LEDS_PER_STRIP, 10);
+
+  EVERY_N_MILLISECONDS(10){
+    Serial.println(sinBeat);
+  }
+
+  FastLED.show();
+}
+
+void phaseBeat1(){
+uint8_t sinBeat   = beatsin8(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+  uint8_t sinBeat2  = beatsin8(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 85);
+  uint8_t sinBeat3  = beatsin8(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 170);
+
+  
+ 
+  leds2[sinBeat]   = CRGB::Blue;
+  leds2[sinBeat2]  = CRGB::Red;
+  leds2[sinBeat3]  = CRGB::White;
+  
+  
+  fadeToBlackBy(leds2,  NUM_LEDS_PER_STRIP, 10);
+
+  EVERY_N_MILLISECONDS(10){
+    Serial.print(sinBeat);
+    Serial.print(",");
+    Serial.print(sinBeat2);
+    Serial.print(",");
+    Serial.println(sinBeat3);
+  }
+
+  FastLED.show();
+}
+
+void rainbowBeat1(){
+  uint16_t beatA = beatsin16(30, 0, 255);
+    uint16_t beatB = beatsin16(20, 0, 255);
+   
+    fill_rainbow(leds2,  NUM_LEDS_PER_STRIP, (beatA+beatB)/2, 8);
+     FastLED.show();
+}
+
+void sawTooth1(){
+uint8_t pos = map(beat16(40, 0), 0, 65535, 0, NUM_LEDS_PER_STRIP );
+  
+  leds2[pos] = CHSV( hue, 200, 255);
+
+  
+  fadeToBlackBy(leds2,NUM_LEDS_PER_STRIP, 3);
+
+
+  EVERY_N_MILLISECONDS( 10 ) {
+    hue++;
+  }
+
+  EVERY_N_MILLISECONDS(10) {
+    Serial.println(pos);
+  }
+   FastLED.show();
+}
+
+void functionsTimer1(){
+  
+ switch (patternCounter) {
+    case 0:
+      movingDots1();
+      break;
+    case 1:
+      rainbowBeat1();
+      break;
+    case 2:
+      redWhiteBlue1();
+      break;
+  }
+
+  EVERY_N_SECONDS(5) {
+    nextPattern();
+  }
+  FastLED.show();
+}
+
+
+
+void redWhiteBlue1() {
+
+uint16_t sinBeat   = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+  uint16_t sinBeat2  = beatsin16(30, 0,NUM_LEDS_PER_STRIP- 1, 0, 21845);
+  uint16_t sinBeat3  = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 43690);
+
+  
+   leds2[sinBeat]   = CRGB::Blue;
+  leds2[sinBeat2]  = CRGB::Red;
+  leds2[sinBeat3]  = CRGB::White;
+  
+ 
+  fadeToBlackBy(leds2,  NUM_LEDS_PER_STRIP, 10);
+  FastLED.show();
+}
+
+void movingDots1() {
+  
+  uint16_t posBeat  = beatsin16(30, 0, NUM_LEDS_PER_STRIP - 1, 0, 0);
+  uint16_t posBeat2 = beatsin16(60, 0,  NUM_LEDS_PER_STRIP - 1, 0, 0);
+
+  uint16_t posBeat3 = beatsin16(30, 0,  NUM_LEDS_PER_STRIP - 1, 0, 32767);
+  uint16_t posBeat4 = beatsin16(60, 0,  NUM_LEDS_PER_STRIP - 1, 0, 32767);
+
+  // Wave for LED color
+  uint8_t colBeat  = beatsin8(45, 0, 255, 0, 0);
+
+  
+  leds2[(posBeat + posBeat2) / 2]  = CHSV(colBeat, 255, 255);
+  leds2[(posBeat3 + posBeat4) / 2]  = CHSV(colBeat, 255, 255);
+
+  
+   fadeToBlackBy(leds2,NUM_LEDS_PER_STRIP, 10);
+   FastLED.show();
+}
+
+void crossfadeTimer1(){
+ EVERY_N_MILLISECONDS(10) {
+   
+blend(source1, source2, leds2, NUM_LEDS_PER_STRIP, blendAmount); 
+    if (useSource1) {
+      if (blendAmount < 255) blendAmount++;                   // Blend 'up' to source 2
+    } else {
+      if (blendAmount > 0) blendAmount--;                     // Blend 'down' to source 1
+    }
+  }
+
+  EVERY_N_SECONDS(5) {
+    nextPattern1();
+  }
+
+  runPattern(source1Pattern, source1);                  // Run both patterns simultaneously
+  runPattern(source2Pattern, source2);
+  
+  FastLED.show();
+}
+
+
+
+void lava1(){
+   for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+    uint8_t brightness = inoise8(i * brightnessScale, millis() / 5);
+    uint8_t index = inoise8(i * indexScale, millis() /10);
+    
+    leds2[i] = ColorFromPalette(lavaPalette, index, brightness);
+    }
+
+  FastLED.show();
+}
+void fire1(){
+   EVERY_N_MILLISECONDS(5) {
+    runFire1();
+  }
+                                                                
+  FastLED.show();
+}
+void runFire1() {
+  int  a = millis();
+  
+  for (int i = 0; i <  NUM_LEDS_PER_STRIP; i++) {
+uint8_t noise = inoise8 (0 , i * 60 + a , a / 3);
+ uint8_t math = abs8(i - ( NUM_LEDS_PER_STRIP-1)) * 255 / ( NUM_LEDS_PER_STRIP-1);
+ uint8_t index = qsub8 (noise, math);
+
+  
+leds2[i] = ColorFromPalette (firePalette, index, 255);      
+  }  
+}
+void movingPixel1(){
+  drawBackground();
+  drawMovingPixel1();
+
+  EVERY_N_MILLISECONDS(20) {
+   
+    fadeToBlackBy(leds2, NUM_LEDS_PER_STRIP, 10); 
+    nblend(leds2, background, NUM_LEDS_PER_STRIP, 30);
+  } 
+  
+  FastLED.show();
+}
+
+
+void drawMovingPixel1() {
+  // A pixel that moves back and forth using noise
+  uint16_t pos = inoise16(millis() * 100);
+  pos = constrain(pos, 13000, 51000);
+  pos = map(pos, 13000, 51000, 0, NUM_LEDS_PER_STRIP - 1);
+  
+  leds2[pos] = CRGB::Red;
+}
+void prettyFill1(){
+   uint8_t octaves = 1;
+  uint16_t x = 0;
+  int scale = 100;
+  uint8_t hue_octaves = 1;
+  uint16_t hue_x = 1;
+  int hue_scale = 50;
+  uint16_t ntime = millis() / 3;
+  uint8_t hue_shift = 5;
+  
+  
+  fill_noise16 (leds2,  NUM_LEDS_PER_STRIP, octaves, x, scale, hue_octaves, hue_x, hue_scale, ntime, hue_shift);
+  FastLED.show();
+}
+
+void fill_raw_noise81(){
+
+timeVal = millis() / 4;
+
+  memset(noiseData, 0, NUM_LEDS_PER_STRIP);
+  fill_raw_noise8(noiseData, NUM_LEDS_PER_STRIP, octaveVal, xVal, scaleVal, timeVal);
+  
+  for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+      
+       leds2[i] = ColorFromPalette(party, noiseData[i], noiseData[NUM_LEDS_PER_STRIP - i - 1]);
+  }
+  
+  FastLED.show();
+}
+void inoise81(){
+uint16_t  x        = 0;
+  int       scale    = 10;
+  uint16_t  t        = 0;
+  
+  for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+      uint8_t hue = inoise8(i * scale + x, t);
+      
+      leds2[i] = CHSV(hue, 255, 255);
+  }
+  
+  FastLED.show();
+}
+void inoise8_demo1(){
+ x = 0;
+  t = millis() / 5;
+  scale = beatsin8(10, 10, 30);
+  
+  for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+      uint8_t noise = inoise8(i * scale + x, t);
+      uint8_t hue = map(noise, 50, 190, 0, 255);
+     
+      leds2[i] = CHSV(hue, 255, 255);
+  }
+  
+  FastLED.show();
+}
+void rgb1(){
+   for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+    
+     leds2[i] = CRGB(i * 20, i * 10, i * 30);
+  }
+  FastLED.show();
+}
+void colorCorr1(){
+
+fill_solid(leds2, NUM_LEDS_PER_STRIP, CRGB::White);
+  
+  FastLED.setCorrection(UncorrectedColor);
+ FastLED.show();
+ M1();
+  delay(1000);
+  M1();
+   delay(1000);
+   M1();
+
+FastLED.setCorrection(TypicalLEDStrip);
+ FastLED.show();
+  M1();
+  delay(1000);
+  M1();
+   delay(1000);
+   M1();
+
+
+  FastLED.setCorrection(TypicalPixelString);
+  FastLED.show();
+  M1();
+  delay(1000);
+  M1();
+   delay(1000);
+   M1();
+
+}
+void colorTemp1(){
+
+fill_solid(leds2, NUM_LEDS_PER_STRIP, CRGB::White);
+
+  EVERY_N_SECONDS(1) {
+    tempIndex++;
+    if (tempIndex > 8) tempIndex = 0;
+  }
+
+  switch (tempIndex) {
+    case 0:
+      FastLED.setTemperature(Candle);
+      break;
+    case 1:
+      FastLED.setTemperature(Tungsten40W);
+    break;
+    case 2:
+      FastLED.setTemperature(Tungsten100W);
+    break;
+    case 3:
+      FastLED.setTemperature(Halogen);
+    break;
+    case 4:
+      FastLED.setTemperature(CarbonArc);
+    break;
+    case 5:
+      FastLED.setTemperature(HighNoonSun);
+    break;
+    case 6:
+      FastLED.setTemperature(DirectSunlight);
+    break;
+    case 7:
+      FastLED.setTemperature(OvercastSky);
+    break;
+    case 8:
+      FastLED.setTemperature(ClearBlueSky);
+    break;
+  }
+
+  FastLED.show();
+}
+void hsvRainbow1(){
+for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+    
+    leds2[i] = CHSV(hue + (i * 10), 255, 255);
+  }
+
+  EVERY_N_MILLISECONDS(15){
+    hue++;
+  }
+
+  FastLED.show();
+}
+void icy1(){
+EVERY_N_MILLISECONDS(50) {
+    
+    
+    leds2[0] = CHSV(160, random8(), random8(100, 255));
+    for (int i = NUM_LEDS_PER_STRIP - 1; i > 0; i--) {
+      
+       leds2[i] = leds2[i - 1];
+    }
+  }
+   FastLED.show();
+}
+void ColorPalette161(){
+
+  fill_palette(leds2, NUM_LEDS_PER_STRIP, paletteIndex, 255 / NUM_LEDS_PER_STRIP, purplePalette, 255, LINEARBLEND);
+  
+  EVERY_N_MILLISECONDS(10){
+    paletteIndex++;
+  }
+  
+  FastLED.show();
+}
+void blueGradientPal1(){
+for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+    
+    leds2[i] = ColorFromPalette(greenblue, colorIndex[i]);
+  }
+  
+  EVERY_N_MILLISECONDS(5){
+    for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+      colorIndex[i]++;
+    }
+  }
+  FastLED.show();
+}
+void fadeToBlackBy1(){
+EVERY_N_MILLISECONDS(50){
+    
+   
+     leds2[random8(0, NUM_LEDS_PER_STRIP )] = ColorFromPalette(myPal, random8(), 255, LINEARBLEND);
+  }
+
+   
+   fadeToBlackBy(leds2, NUM_LEDS_PER_STRIP, 1);
+  
+  FastLED.show();
+}
+void heatMap1(){
+ 
+ fill_palette(leds2, NUM_LEDS_PER_STRIP, paletteIndex, 255 / NUM_LEDS_PER_STRIP, myPal1, 255, LINEARBLEND);
+  
+  EVERY_N_MILLISECONDS(10){
+    paletteIndex++;
+  }
+  FastLED.show();
+  }
+  
+  void paletteBlending1(){
+  for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+    
+    leds2[i] = ColorFromPalette(currentPalette, colorIndex[i]);
+  }
+
+  nblendPaletteTowardPalette( currentPalette, targetPalette, 10 );
+
+  switch (whichPalette) {
+    case 0:
+      targetPalette = orangepink_gp;
+      break;
+    case 1:
+      targetPalette = browngreen_gp;
+      break;
+     case 2:
+      targetPalette = greenblue_gp;
+      break;
+  }
+
+  EVERY_N_SECONDS(5) {
+    whichPalette++;
+    if (whichPalette > 2) whichPalette = 0;
+    Serial.println(currentPalette[0]);
+  }
+  
+  EVERY_N_MILLISECONDS(5){
+    for (int i = 0; i < NUM_LEDS_PER_STRIP; i++) {
+      colorIndex[i]++;
+    }
+  }
+
+  FastLED.show();
+  }
+  
+ void paletteKnife1(){
+   
+  fill_palette(leds2, NUM_LEDS_PER_STRIP, paletteIndex, 255 / NUM_LEDS_PER_STRIP, myPal2, 255, LINEARBLEND);
+  
+  EVERY_N_MILLISECONDS(10){
+    paletteIndex++;
+  }
+  
+  FastLED.show();
+  }
+  void M1(){
+    if(s==1){
+      addingwaves();
+    }
+     if(s==2){
+       blur();
+    }
+    if(s==3){
+      blurphaseBeat();
+    }
+     if(s==4){
+       brightnessWave();
+    }
+     if(s==5){
+      gradientBeat();
+    }
+     if(s==6){
+      movingDot();
+    }
+     if(s==7){
+     phaseBeat();
+    }
+     if(s==8){
+      rainbowBeat();
+    }
+     if(s==9){
+       sawTooth();
+    }
+     if(s==10){
+      movingDots();
+    }
+     if(s==11){
+      redWhiteBlue();
+    }
+     if(s==12){
+      functionsTimer();
+    }
+     if(s==13){
+      crossfadeTimer();
+    }
+     if(s==14){
+      lava();
+    }
+     if(s==15){
+     fire();
+    }
+     if(s==16){
+      movingPixel();
+    }
+     if(s==17){
+     prettyFill();
+    }
+     if(s==18){
+      fill_raw_noise8();
+    }
+     if(s==19){
+      inoise8();
+    }
+     if(s==20){
+     inoise8_demo();
+    }
+     if(s==21){
+      rgb();
+    }
+     if(s==22){
+     colorCorr();
+    }
+     if(s==23){
+      colorTemp();
+    }
+     if(s==24){
+     hsvRainbow();
+    }
+     if(s==25){
+     icy();
+    }
+     if(s==26){
+      ColorPalette16();
+    }
+     if(s==27){
+     blueGradientPal();
+    }
+     if(s==28){
+      fadeToBlackBy();
+    }
+     if(s==29){
+      heatMap();
+    }
+     if(s==30){
+     paletteBlending();
+    }
+    if(s==31){
+     paletteKnife();
+    }
+    
+  }
+  void M2(){
+    if(p==1){
+      addingwaves1();
+    }
+     if(p==2){
+       blur1();
+    }
+    if(p==3){
+      blurphaseBeat1();
+    }
+     if(p==4){
+       brightnessWave1();
+    }
+     if(p==5){
+      gradientBeat1();
+    }
+     if(p==6){
+      movingDot1();
+    }
+     if(p==7){
+     phaseBeat1();
+    }
+     if(p==8){
+      rainbowBeat1();
+    }
+     if(p==9){
+       sawTooth1();
+    }
+     if(p==10){
+      movingDots1();
+    }
+     if(p==11){
+      redWhiteBlue1();
+    }
+     if(p==12){
+      functionsTimer1();
+    }
+     if(p==13){
+      crossfadeTimer1();
+    }
+     if(p==14){
+      lava1();
+    }
+     if(p==15){
+     fire1();
+    }
+     if(p==16){
+      movingPixel1();
+    }
+     if(p==17){
+     prettyFill1();
+    }
+     if(p==18){
+      fill_raw_noise81();
+    }
+     if(p==19){
+      inoise81();
+    }
+     if(p==20){
+     inoise8_demo1();
+    }
+     if(p==21){
+      rgb1();
+    }
+     if(p==22){
+     colorCorr1();
+    }
+     if(p==23){
+      colorTemp1();
+    }
+     if(p==24){
+     hsvRainbow1();
+    }
+     if(p==25){
+     icy1();
+    }
+     if(p==26){
+      ColorPalette161();
+    }
+     if(p==27){
+     blueGradientPal1();
+    }
+     if(p==28){
+      fadeToBlackBy1();
+    }
+     if(p==29){
+      heatMap1();
+    }
+     if(p==30){
+     paletteBlending1();
+    }
+    if(p==31){
+     paletteKnife1();
+    }
+    
+  }
+  
+ 
+   
+  
