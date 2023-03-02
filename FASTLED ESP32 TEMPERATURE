@@ -6,7 +6,6 @@ WiFiServer server(80);
 #define LED_PIN1    4
 #define LED_PIN2     16
 const int ITS=32;
-const int OTS=12;
 const int led1=13;
 const int led2=17;
 const int led3=21;
@@ -20,7 +19,7 @@ CRGB leds2[NUM_LEDS_PER_STRIP ];
 CRGB count[10];
 #define BRIGHTNESS  64
 int val1,val2,val3;
-float V1,V2,V3;
+float V1,V3;
 
 int c,s,p,b=0;
 int i,Count;
@@ -144,9 +143,8 @@ DEFINE_GRADIENT_PALETTE( Sunset_Real_gp ) {
 CRGBPalette16 myPal2 = Sunset_Real_gp;
 
 void setup() {
-  Serial.begin(38400);
-   Serial2.begin(38400); 
-   pinMode(led1, OUTPUT);
+  Serial.begin(115200);
+     pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
    pinMode(led3, OUTPUT);
  FastLED.addLeds<LED_TYPE, LED_PIN1, COLOR_ORDER>(leds1, NUM_LEDS_PER_STRIP);
@@ -191,11 +189,7 @@ V1=val1*3.3/4095;
 Serial.print("V1: ");
 Serial.println(V1);
 
- val2=analogRead(OTS);
-V2=val2*3.3/4095;
-Serial.print("V2: ");
-Serial.println(V2);
-
+ 
      if (req.indexOf("/START") != -1) {
       b=1;
       FastLED.clear();
@@ -209,7 +203,7 @@ Serial.println(V2);
       s=33;
      p=33;
      }
- if((V1<=0.85 )|| (V2<=0.85) ||b==0 || V3<1.5 ||V3>2.5 )
+ if((V1<=0.85 ) ||b==0 || V3<1.5 ||V3>2.5 )
   {
     digitalWrite(led1,LOW);
      digitalWrite(led2,LOW);
@@ -220,7 +214,7 @@ Serial.println(V2);
 FastLED.clear();
       FastLED.show();
  }
- else if(V1>0.85&& V2>0.85&&b==1&& (V3>=1.5 && V3<=2.5))
+ else if(V1>0.85&&b==1&& (V3>=1.5 && V3<=2.5))
  {
    digitalWrite(led1,HIGH);
      digitalWrite(led2,HIGH);
